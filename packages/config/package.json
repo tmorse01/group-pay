@@ -1,0 +1,27 @@
+{
+  "name": "@group-pay/config",
+  "version": "1.0.0",
+  "description": "Shared ESLint, Prettier, and TypeScript configurations",
+  "main": "index.js",
+  "files": [
+    "eslint-preset.js",
+    "prettier.config.js",
+    "tsconfig.base.json"
+  ],
+  "scripts": {
+    "test": "echo \"No tests for config package\""
+  },
+  "peerDependencies": {
+    "eslint": "^8.45.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "config",
+    "eslint",
+    "prettier",
+    "typescript"
+  ],
+  "author": "",
+  "license": "ISC"
+}

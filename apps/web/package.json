@@ -1,0 +1,45 @@
+{
+  "name": "@group-pay/web",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "preview": "vite preview",
+    "test": "vitest",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@group-pay/shared": "workspace:*",
+    "@mantine/core": "^7.11.0",
+    "@mantine/dates": "^7.11.0",
+    "@mantine/form": "^7.11.0",
+    "@mantine/hooks": "^7.11.0",
+    "@mantine/notifications": "^7.11.0",
+    "@tanstack/react-query": "^4.32.0",
+    "dayjs": "^1.11.9",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "react-router-dom": "^6.15.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@group-pay/config": "workspace:*",
+    "@eslint/js": "^9.33.0",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "@vitejs/plugin-react": "^5.0.0",
+    "eslint": "^9.33.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.3.0",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.39.1",
+    "vite": "^7.1.2",
+    "vitest": "^0.34.0"
+  }
+}

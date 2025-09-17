@@ -1,0 +1,50 @@
+{
+  "name": "group-pay",
+  "version": "1.0.0",
+  "description": "Group expense tracker and bill splitting app",
+  "private": true,
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm -r --parallel dev",
+    "lint": "pnpm -r lint",
+    "lint:fix": "pnpm -r lint:fix",
+    "type-check": "pnpm -r type-check",
+    "test": "pnpm -r test",
+    "clean": "pnpm -r clean"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.33.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.45.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-react": "^7.33.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.3",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0",
+    "typescript-eslint": "^8.39.1"
+  },
+  "lint-staged": {
+    "packages/shared/**/*.{js,jsx,ts,tsx}": [
+      "cd packages/shared && pnpm lint:fix"
+    ],
+    "apps/api/**/*.{js,jsx,ts,tsx}": [
+      "cd apps/api && pnpm lint:fix"
+    ],
+    "apps/web/**/*.{js,jsx,ts,tsx}": [
+      "cd apps/web && pnpm lint:fix"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  },
+  "keywords": [
+    "expense-tracker",
+    "bill-splitting",
+    "group-expenses"
+  ],
+  "author": "",
+  "license": "ISC"
+}

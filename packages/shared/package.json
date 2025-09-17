@@ -1,0 +1,44 @@
+{
+  "name": "@group-pay/shared",
+  "version": "1.0.0",
+  "description": "Shared types, schemas, and utilities for Group Pay",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rm -rf dist",
+    "test": "vitest",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.33.0",
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^8.8.0",
+    "typescript": "^5.0.0",
+    "typescript-eslint": "^8.39.1",
+    "vitest": "^0.34.0"
+  },
+  "keywords": [
+    "shared",
+    "types",
+    "schemas"
+  ],
+  "author": "",
+  "license": "ISC"
+}
