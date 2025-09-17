@@ -8,6 +8,10 @@ export * from './schemas/invite';
 // Export utilities
 export * from './utils/currency';
 export * from './utils/splits';
+export * from './utils/balances';
+export * from './utils/smartSplits';
+export * from './utils/validation';
+export * from './utils/receipts';
 
 // Export error types
 export * from './types/errors';
