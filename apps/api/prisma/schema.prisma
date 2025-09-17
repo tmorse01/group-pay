@@ -1,0 +1,183 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum GroupMemberRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum SettlementMethod {
+  VENMO
+  PAYPAL
+  ZELLE
+  STRIPE_LINK
+  MARK_ONLY
+}
+
+enum SettlementStatus {
+  PENDING
+  CONFIRMED
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  CANCELLED
+}
+
+// Models
+model User {
+  id           String   @id @default(uuid()) @db.Uuid
+  email        String   @unique
+  passwordHash String
+  name         String
+  photoUrl     String?
+  venmoHandle  String?
+  paypalLink   String?
+  createdAt    DateTime @default(now())
+
+  // Relations
+  ownedGroups         Group[]
+  groupMemberships    GroupMember[]
+  paidExpenses        Expense[]
+  expenseShares       ExpenseParticipant[]
+  sentSettlements     Settlement[] @relation("SettlementFrom")
+  receivedSettlements Settlement[] @relation("SettlementTo")
+  createdInvites      Invite[]
+}
+
+model Group {
+  id        String   @id @default(uuid()) @db.Uuid
+  ownerId   String   @db.Uuid
+  name      String
+  currency  String   @default("USD") // ISO 4217 currency codes
+  createdAt DateTime @default(now())
+
+  // Relations
+  owner       User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  members     GroupMember[]
+  expenses    Expense[]
+  settlements Settlement[]
+  invites     Invite[]
+
+  @@index([ownerId])
+}
+
+model GroupMember {
+  id       String          @id @default(uuid()) @db.Uuid
+  groupId  String          @db.Uuid
+  userId   String          @db.Uuid
+  role     GroupMemberRole @default(MEMBER)
+  joinedAt DateTime        @default(now())
+
+  // Relations
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+  @@index([groupId])
+  @@index([userId])
+}
+
+model Expense {
+  id          String   @id @default(uuid()) @db.Uuid
+  groupId     String   @db.Uuid
+  payerId     String   @db.Uuid
+  description String
+  amountCents Int      // Store as cents to avoid decimal precision issues
+  currency    String   @default("USD")
+  date        DateTime @default(now())
+  category    String?
+  notes       String?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  group        Group                 @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  payer        User                  @relation(fields: [payerId], references: [id])
+  participants ExpenseParticipant[]
+  receipts     Receipt[]
+
+  @@index([groupId])
+  @@index([payerId])
+  @@index([date])
+}
+
+model ExpenseParticipant {
+  id         String @id @default(uuid()) @db.Uuid
+  expenseId  String @db.Uuid
+  userId     String @db.Uuid
+  shareCents Int    // Amount this user owes for this expense (in cents)
+
+  // Relations
+  expense Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@unique([expenseId, userId])
+  @@index([expenseId])
+  @@index([userId])
+}
+
+model Settlement {
+  id          String           @id @default(uuid()) @db.Uuid
+  groupId     String           @db.Uuid
+  fromUserId  String           @db.Uuid
+  toUserId    String           @db.Uuid
+  amountCents Int
+  method      SettlementMethod
+  externalRef String?          // Reference ID from payment provider
+  status      SettlementStatus @default(PENDING)
+  createdAt   DateTime         @default(now())
+
+  // Relations
+  group    Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  fromUser User  @relation("SettlementFrom", fields: [fromUserId], references: [id])
+  toUser   User  @relation("SettlementTo", fields: [toUserId], references: [id])
+
+  @@index([groupId])
+  @@index([fromUserId])
+  @@index([toUserId])
+}
+
+model Invite {
+  id        String       @id @default(uuid()) @db.Uuid
+  groupId   String       @db.Uuid
+  code      String       @unique
+  createdBy String       @db.Uuid
+  status    InviteStatus @default(PENDING)
+  expiresAt DateTime
+  createdAt DateTime     @default(now())
+
+  // Relations
+  group   Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  creator User  @relation(fields: [createdBy], references: [id])
+
+  @@index([code])
+  @@index([groupId])
+  @@index([expiresAt])
+}
+
+model Receipt {
+  id        String @id @default(uuid()) @db.Uuid
+  expenseId String @db.Uuid
+  fileUrl   String
+  mimeType  String
+
+  // Relations
+  expense Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+
+  @@index([expenseId])
+}

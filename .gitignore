@@ -114,9 +114,7 @@ $RECYCLE.BIN/
 *.sqlite3
 
 # Prisma
-# Keep migrations but ignore generated client
-/apps/api/prisma/migrations/*
-!/apps/api/prisma/migrations/.gitkeep
+# Include migrations in git, but ignore generated client in node_modules
 
 # Local development databases
 /apps/api/dev.db
