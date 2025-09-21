@@ -2,7 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { prisma } from '../lib/prisma.js';
 
 export default async function healthRoutes(fastify: FastifyInstance) {
-  fastify.get('/health', async () => {
+  fastify.get('/', async () => {
     const startTime = Date.now();
 
     try {
@@ -33,34 +33,41 @@ export default async function healthRoutes(fastify: FastifyInstance) {
     }
   });
 
-  fastify.get('/health/db', async () => {
+  fastify.get('/db', async () => {
     try {
-      const result = await prisma.$queryRaw`
-        SELECT 
-          version() as version,
-          current_database() as database,
-          current_user as user,
-          inet_server_addr() as host,
-          inet_server_port() as port
-      `;
+      // Test basic connectivity
+      const connectionTest = await prisma.$queryRaw`SELECT 1 as test`;
 
-      const stats = await prisma.$queryRaw`
+      // Get database info (simplified for PostgreSQL)
+      const dbInfo = await prisma.$queryRaw`
         SELECT 
-          schemaname,
-          tablename,
-          n_tup_ins as inserts,
-          n_tup_upd as updates,
-          n_tup_del as deletes
-        FROM pg_stat_user_tables
-        ORDER BY schemaname, tablename
+          current_database() as database_name,
+          current_user as username,
+          version() as version
       `;
 
       return {
-        connection: result,
-        statistics: stats,
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        message: 'Database connection successful',
+        connection_test: connectionTest,
+        database_info: dbInfo,
+        environment: {
+          NODE_ENV: process.env.NODE_ENV,
+          DATABASE_URL: process.env.DATABASE_URL ? 'configured' : 'missing',
+        },
       };
     } catch (error) {
-      throw new Error(`Database health check failed: ${error}`);
+      return {
+        status: 'unhealthy',
+        timestamp: new Date().toISOString(),
+        message: 'Database connection failed',
+        error: error instanceof Error ? error.message : 'Unknown error',
+        environment: {
+          NODE_ENV: process.env.NODE_ENV,
+          DATABASE_URL: process.env.DATABASE_URL ? 'configured' : 'missing',
+        },
+      };
     }
   });
 }
