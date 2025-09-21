@@ -1,8 +1,9 @@
 import { FastifyInstance } from 'fastify';
 import { prisma } from '../lib/prisma.js';
+import { healthSchemas } from '../schemas/health.js';
 
 export default async function healthRoutes(fastify: FastifyInstance) {
-  fastify.get('/', async () => {
+  fastify.get('/', { schema: healthSchemas.healthCheck }, async () => {
     const startTime = Date.now();
 
     try {
@@ -33,7 +34,7 @@ export default async function healthRoutes(fastify: FastifyInstance) {
     }
   });
 
-  fastify.get('/db', async () => {
+  fastify.get('/db', { schema: healthSchemas.databaseCheck }, async () => {
     try {
       // Test basic connectivity
       const connectionTest = await prisma.$queryRaw`SELECT 1 as test`;
