@@ -7,7 +7,7 @@ import { GroupDetail } from './pages/GroupDetail';
 import { Login } from './pages/Login';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -17,7 +17,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user) {
+  if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
@@ -25,13 +25,13 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 }
 
 export function Router() {
-  const { user } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   return (
     <Routes>
       <Route
         path="/login"
-        element={user ? <Navigate to="/" replace /> : <Login />}
+        element={isAuthenticated ? <Navigate to="/" replace /> : <Login />}
       />
       <Route
         path="/"
