@@ -9,8 +9,13 @@ import swaggerUi from '@fastify/swagger-ui';
 import { env } from './config/env.js';
 import errorHandler from './plugins/errorHandler.js';
 import auth from './plugins/auth.js';
+// import rateLimit from './plugins/rateLimit.js';
 import authRoutes from './routes/auth.js';
 import healthRoutes from './routes/health.js';
+import groupRoutes from './routes/groups.js';
+import expenseRoutes from './routes/expenses.js';
+import settlementRoutes from './routes/settlements.js';
+import userRoutes from './routes/users.js';
 
 export async function createApp() {
   const app = Fastify({
@@ -68,6 +73,10 @@ export async function createApp() {
           description: 'User authentication endpoints',
         },
         { name: 'Health', description: 'Health check endpoints' },
+        { name: 'Groups', description: 'Group management endpoints' },
+        { name: 'Expenses', description: 'Expense management endpoints' },
+        { name: 'Settlements', description: 'Settlement/payment endpoints' },
+        { name: 'Users', description: 'User management endpoints' },
       ],
       securityDefinitions: {
         bearerAuth: {
@@ -91,12 +100,19 @@ export async function createApp() {
   // Register error handler before auth plugin
   await app.register(errorHandler);
 
+  // TODO: Register rate limiting when compatible version is available
+  // await app.register(rateLimit);
+
   // Register auth plugin
   await app.register(auth);
 
   // Register routes
   await app.register(healthRoutes, { prefix: '/health' });
   await app.register(authRoutes, { prefix: '/auth' });
+  await app.register(groupRoutes, { prefix: '/groups' });
+  await app.register(expenseRoutes, { prefix: '/expenses' });
+  await app.register(settlementRoutes, { prefix: '/settlements' });
+  await app.register(userRoutes, { prefix: '/users' });
 
   // Root endpoint
   app.get('/', async () => {
