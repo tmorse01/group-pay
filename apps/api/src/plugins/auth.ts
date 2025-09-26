@@ -16,12 +16,12 @@ async function authPlugin(fastify: FastifyInstance) {
   fastify.addHook('preHandler', async (request: FastifyRequest) => {
     // Skip auth for public routes
     const publicRoutes = [
-      '/auth/register',
-      '/auth/login',
-      '/auth/refresh',
-      '/auth/logout',
-      '/health',
-      '/docs',
+      '/api/auth/register',
+      '/api/auth/login',
+      '/api/auth/refresh',
+      '/api/auth/logout',
+      '/api/health',
+      '/api/docs',
     ];
 
     if (publicRoutes.some((route) => request.url.startsWith(route))) {

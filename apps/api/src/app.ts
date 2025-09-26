@@ -107,12 +107,12 @@ export async function createApp() {
   await app.register(auth);
 
   // Register routes
-  await app.register(healthRoutes, { prefix: '/health' });
-  await app.register(authRoutes, { prefix: '/auth' });
-  await app.register(groupRoutes, { prefix: '/groups' });
-  await app.register(expenseRoutes, { prefix: '/expenses' });
-  await app.register(settlementRoutes, { prefix: '/settlements' });
-  await app.register(userRoutes, { prefix: '/users' });
+  await app.register(healthRoutes, { prefix: '/api/health' });
+  await app.register(authRoutes, { prefix: '/api/auth' });
+  await app.register(groupRoutes, { prefix: '/api/groups' });
+  await app.register(expenseRoutes, { prefix: '/api/expenses' });
+  await app.register(settlementRoutes, { prefix: '/api/settlements' });
+  await app.register(userRoutes, { prefix: '/api/users' });
 
   // Root endpoint
   app.get('/', async () => {
