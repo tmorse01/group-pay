@@ -1,5 +1,6 @@
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
+import { env } from '../config/env.js';
 
 export async function hashPassword(password: string): Promise<string> {
   return argon2.hash(password, {
@@ -29,7 +30,7 @@ export interface JWTPayload {
 }
 
 export function generateAccessToken(payload: JWTPayload): string {
-  return jwt.sign(payload, process.env.JWT_SECRET!, {
+  return jwt.sign(payload, env.JWT_SECRET, {
     expiresIn: '15m',
     issuer: 'group-pay-api',
     audience: 'group-pay-web',
@@ -37,7 +38,7 @@ export function generateAccessToken(payload: JWTPayload): string {
 }
 
 export function generateRefreshToken(payload: JWTPayload): string {
-  return jwt.sign(payload, process.env.JWT_SECRET!, {
+  return jwt.sign(payload, env.JWT_SECRET, {
     expiresIn: '7d',
     issuer: 'group-pay-api',
     audience: 'group-pay-web',
@@ -45,7 +46,7 @@ export function generateRefreshToken(payload: JWTPayload): string {
 }
 
 export function verifyToken(token: string): JWTPayload {
-  return jwt.verify(token, process.env.JWT_SECRET!, {
+  return jwt.verify(token, env.JWT_SECRET, {
     issuer: 'group-pay-api',
     audience: 'group-pay-web',
   }) as JWTPayload;

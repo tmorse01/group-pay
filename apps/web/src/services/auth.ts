@@ -44,10 +44,7 @@ export function useLogin() {
   return useMutation({
     mutationFn: authApi.login,
     onSuccess: (data) => {
-      // Store token
-      localStorage.setItem('auth_token', data.token);
-
-      // Cache user data
+      // Cache user data (token is now in httpOnly cookie)
       queryClient.setQueryData(['auth', 'me'], data.user);
 
       // Invalidate and refetch any queries that depend on auth
@@ -55,7 +52,6 @@ export function useLogin() {
     },
     onError: () => {
       // Clear any stale auth data
-      localStorage.removeItem('auth_token');
       queryClient.removeQueries({ queryKey: ['auth'] });
     },
   });
@@ -67,10 +63,7 @@ export function useRegister() {
   return useMutation({
     mutationFn: authApi.register,
     onSuccess: (data) => {
-      // Store token
-      localStorage.setItem('auth_token', data.token);
-
-      // Cache user data
+      // Cache user data (token is now in httpOnly cookie)
       queryClient.setQueryData(['auth', 'me'], data.user);
 
       // Invalidate and refetch any queries that depend on auth
@@ -85,15 +78,11 @@ export function useLogout() {
   return useMutation({
     mutationFn: authApi.logout,
     onSuccess: () => {
-      // Clear token
-      localStorage.removeItem('auth_token');
-
-      // Clear all cached data
+      // Clear all cached data (cookies are cleared server-side)
       queryClient.clear();
     },
     onError: () => {
       // Even if logout fails on server, clear local data
-      localStorage.removeItem('auth_token');
       queryClient.clear();
     },
   });

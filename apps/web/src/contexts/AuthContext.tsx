@@ -1,4 +1,4 @@
-import { createContext, useEffect } from 'react';
+import { createContext } from 'react';
 import type { ReactNode } from 'react';
 import { useMe, useLogin, useLogout } from '../services/auth';
 
@@ -25,14 +25,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loginMutation = useLogin();
   const logoutMutation = useLogout();
 
-  // Check if user has token on mount
-  useEffect(() => {
-    const token = localStorage.getItem('auth_token');
-    if (!token && user) {
-      // If no token but we have user data, something's wrong - clear it
-      logoutMutation.mutate();
-    }
-  }, [user, logoutMutation]);
+  // Removed the problematic useEffect that was checking localStorage
+  // since we're now using httpOnly cookies for auth
 
   const login = async (email: string, password: string) => {
     await loginMutation.mutateAsync({ email, password });
@@ -42,7 +36,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logoutMutation.mutate();
   };
 
-  const isAuthenticated = !!user && !!localStorage.getItem('auth_token');
+  // Since we're using cookies, just check if we have a user
+  const isAuthenticated = !!user;
   const isLoading =
     isLoadingUser || loginMutation.isPending || logoutMutation.isPending;
 

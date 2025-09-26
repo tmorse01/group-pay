@@ -25,22 +25,26 @@ async function request<T>(
   const url = `${API_BASE_URL}${endpoint}`;
 
   const config: RequestInit = {
+    credentials: 'include', // This is crucial - sends cookies with requests
     headers: {
-      'Content-Type': 'application/json',
       ...fetchOptions.headers,
     },
     ...fetchOptions,
   };
 
-  // Add auth token if required
+  // Only set Content-Type if we have a body
+  if (fetchOptions.body) {
+    config.headers = {
+      'Content-Type': 'application/json',
+      ...config.headers,
+    };
+  }
+
+  // Don't add Authorization header - we're using httpOnly cookies now
+  // The cookies will be sent automatically with credentials: 'include'
   if (requiresAuth) {
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-      config.headers = {
-        ...config.headers,
-        Authorization: `Bearer ${token}`,
-      };
-    }
+    // Clear any old tokens from localStorage since we're using cookies now
+    localStorage.removeItem('auth_token');
   }
 
   try {

@@ -39,17 +39,21 @@ export async function createApp() {
   await app.register(sensible);
 
   await app.register(cors, {
-    origin: env.CORS_ORIGIN,
+    origin: (origin, cb) => {
+      const hostname = new URL(origin || 'http://localhost').hostname;
+      if (hostname === 'localhost' || hostname === '127.0.0.1') {
+        // Allow any port for localhost in development
+        cb(null, true);
+        return;
+      }
+      cb(new Error('Not allowed'), false);
+    },
     credentials: true,
   });
 
   await app.register(cookie, {
     secret: env.JWT_SECRET,
-    parseOptions: {
-      httpOnly: true,
-      secure: env.NODE_ENV === 'production',
-      sameSite: 'lax',
-    },
+    parseOptions: {},
   });
 
   await app.register(jwt, {
