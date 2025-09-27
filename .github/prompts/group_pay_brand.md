@@ -1,4 +1,10 @@
-# GroupPay — Brand Guide (Draft)
+# Gr**Tagline**
+
+_"Split smart, settle simple.**Hero Headline (Landing Page)**  
+🌱 _"Split smart. Settle simple."\_
+
+**Supporting Subheadline**  
+Track, split, and settle group expenses effortlessly — transparent, fair, and instant payments for everyone.y — Brand Guide (Draft)
 
 ## 🌟 Brand Essence
 
@@ -26,10 +32,11 @@ Make group expenses simple, fair, and instant — so friends, roommates, and tea
 
 **Colors (Fintech-Friendly Palette)**
 
-- **Primary**: Teal (#06B6D4) — trust, money, digital.
-- **Secondary**: Purple (#7C3AED) — social, energy, fun.
-- **Accent**: Lime (#A3E635) — highlights, CTAs.
-- **Neutral**: Slate (#1E293B) + White (#FFFFFF).
+- **Primary**: Light Green (#4CA30D) — growth, money, trust, freshness.
+- **Secondary**: Medium Green (#667C1A) — stability, reliability, nature.
+- **Accent**: Bright Green (#85E13A) — energy, highlights, CTAs, success.
+- **Light Tints**: Very Light Green (#F3FEEF) — backgrounds, subtle highlights.
+- **Neutral**: Dark Gray (#18211B) + White (#FFFFFF).
 
 **Typography**
 

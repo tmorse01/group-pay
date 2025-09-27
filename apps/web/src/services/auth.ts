@@ -32,7 +32,10 @@ const authApi = {
   register: (data: RegisterRequest): Promise<LoginResponse> =>
     api.post('/api/auth/register', data, { requiresAuth: false }),
 
-  me: (): Promise<User> => api.get('/api/auth/me'),
+  me: async (): Promise<User> => {
+    const response = (await api.get('/api/auth/me')) as { user: User };
+    return response.user;
+  },
 
   logout: (): Promise<void> => api.post('/api/auth/logout'),
 };
