@@ -77,16 +77,16 @@ export function CreateGroupModal({ isOpen, onClose }: CreateGroupModalProps) {
     <ModalOverlay isOpen={isOpen} onOpenChange={handleClose}>
       <Modal>
         <Dialog>
-          <div className="bg-white dark-mode:bg-neutral-800 rounded-xl shadow-xl max-w-md w-full mx-4">
+          <div className="bg-white dark:bg-neutral-800 rounded-xl shadow-xl max-w-md w-full mx-4">
             {/* Header */}
-            <div className="px-6 py-4 border-b border-neutral-200 dark-mode:border-neutral-700">
+            <div className="px-6 py-4 border-b border-neutral-200 dark:border-neutral-700">
               <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold text-neutral-900 dark-mode:text-neutral-50">
+                <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-50">
                   Create New Group
                 </h2>
                 <button
                   onClick={handleClose}
-                  className="text-neutral-400 hover:text-neutral-600 dark-mode:hover:text-neutral-300 transition-colors"
+                  className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
                   aria-label="Close"
                 >
                   <svg
@@ -109,7 +109,7 @@ export function CreateGroupModal({ isOpen, onClose }: CreateGroupModalProps) {
             {/* Form */}
             <form onSubmit={handleSubmit} className="px-6 py-4 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark-mode:text-neutral-300 mb-2">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                   Group Name *
                 </label>
                 <input
@@ -122,24 +122,24 @@ export function CreateGroupModal({ isOpen, onClose }: CreateGroupModalProps) {
                   }}
                   placeholder="Enter group name..."
                   className={cx(
-                    'w-full px-3 py-2 border rounded-lg bg-white dark-mode:bg-neutral-900 text-neutral-900 dark-mode:text-neutral-50',
+                    'w-full px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-50',
                     'focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors',
-                    'placeholder-neutral-500 dark-mode:placeholder-neutral-400',
+                    'placeholder-neutral-500 dark:placeholder-neutral-400',
                     errors.name
-                      ? 'border-red-300 dark-mode:border-red-600'
-                      : 'border-neutral-300 dark-mode:border-neutral-600'
+                      ? 'border-red-300 dark:border-red-600'
+                      : 'border-neutral-300 dark:border-neutral-600'
                   )}
                   required
                 />
                 {errors.name && (
-                  <p className="mt-1 text-sm text-red-600 dark-mode:text-red-400">
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                     {errors.name}
                   </p>
                 )}
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-neutral-700 dark-mode:text-neutral-300 mb-2">
+                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
                   Currency
                 </label>
                 <select
@@ -153,11 +153,11 @@ export function CreateGroupModal({ isOpen, onClose }: CreateGroupModalProps) {
                       setErrors((prev) => ({ ...prev, currency: undefined }));
                   }}
                   className={cx(
-                    'w-full px-3 py-2 border rounded-lg bg-white dark-mode:bg-neutral-900 text-neutral-900 dark-mode:text-neutral-50',
+                    'w-full px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-50',
                     'focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors',
                     errors.currency
-                      ? 'border-red-300 dark-mode:border-red-600'
-                      : 'border-neutral-300 dark-mode:border-neutral-600'
+                      ? 'border-red-300 dark:border-red-600'
+                      : 'border-neutral-300 dark:border-neutral-600'
                   )}
                 >
                   {CURRENCIES.map((currency) => (
@@ -167,7 +167,7 @@ export function CreateGroupModal({ isOpen, onClose }: CreateGroupModalProps) {
                   ))}
                 </select>
                 {errors.currency && (
-                  <p className="mt-1 text-sm text-red-600 dark-mode:text-red-400">
+                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
                     {errors.currency}
                   </p>
                 )}
@@ -175,7 +175,7 @@ export function CreateGroupModal({ isOpen, onClose }: CreateGroupModalProps) {
             </form>
 
             {/* Footer */}
-            <div className="px-6 py-4 border-t border-neutral-200 dark-mode:border-neutral-700 flex justify-end gap-3">
+            <div className="px-6 py-4 border-t border-neutral-200 dark:border-neutral-700 flex justify-end gap-3">
               <Button
                 color="tertiary"
                 onClick={handleClose}

@@ -292,7 +292,7 @@ export function useAuth() {
   // Interactive states
   'hover:bg-neutral-50 focus:outline-none focus:ring-2',
   // Dark mode
-  'dark-mode:bg-neutral-800 dark-mode:border-neutral-700',
+  'dark:bg-neutral-800 dark:border-neutral-700',
   // Conditional classes
   isActive && 'bg-green-50 border-green-200',
   className
@@ -321,8 +321,8 @@ const buttonStyles = sortCx({
 
 ```tsx
 // ✅ Good - Consistent dark mode classes
-<div className="bg-white text-neutral-900 dark-mode:bg-neutral-800 dark-mode:text-neutral-100">
-  <p className="text-neutral-600 dark-mode:text-neutral-400">Secondary text</p>
+<div className="bg-white text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100">
+  <p className="text-neutral-600 dark:text-neutral-400">Secondary text</p>
 </div>
 ```
 

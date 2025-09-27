@@ -55,7 +55,7 @@ export function GroupDetail() {
     return (
       <div className="flex items-center justify-center py-12">
         <LoadingSpinner size="lg" />
-        <p className="text-neutral-600 dark-mode:text-neutral-400 ml-3">
+        <p className="text-neutral-600 dark:text-neutral-400 ml-3">
           Loading group details...
         </p>
       </div>
@@ -84,7 +84,7 @@ export function GroupDetail() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white dark-mode:bg-neutral-800 rounded-lg border border-neutral-200 dark-mode:border-neutral-700 p-6">
+      <div className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700 p-6">
         <div className="flex justify-between items-start">
           <div className="flex-1">
             {isEditingName ? (
@@ -93,7 +93,7 @@ export function GroupDetail() {
                   type="text"
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
-                  className="text-2xl font-bold bg-transparent border-b-2 border-green-500 focus:outline-none text-neutral-900 dark-mode:text-neutral-50"
+                  className="text-2xl font-bold bg-transparent border-b-2 border-green-500 focus:outline-none text-neutral-900 dark:text-neutral-50"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') handleUpdateName();
                     if (e.key === 'Escape') {
@@ -126,7 +126,7 @@ export function GroupDetail() {
               </div>
             ) : (
               <div className="flex items-center gap-3">
-                <h1 className="text-2xl font-bold text-neutral-900 dark-mode:text-neutral-50">
+                <h1 className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
                   {groupData.name}
                 </h1>
                 {isOwnerOrAdmin && (
@@ -144,7 +144,7 @@ export function GroupDetail() {
               </div>
             )}
 
-            <div className="flex items-center gap-4 mt-2 text-sm text-neutral-600 dark-mode:text-neutral-400">
+            <div className="flex items-center gap-4 mt-2 text-sm text-neutral-600 dark:text-neutral-400">
               <span>{groupData.currency}</span>
               <span>•</span>
               <span>
@@ -180,27 +180,27 @@ export function GroupDetail() {
 
         {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
-          <div className="bg-neutral-50 dark-mode:bg-neutral-700 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-neutral-900 dark-mode:text-neutral-50">
+          <div className="bg-neutral-50 dark:bg-neutral-700 rounded-lg p-4 text-center">
+            <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
               {formatCurrency(totalExpenses, groupData.currency)}
             </div>
-            <div className="text-sm text-neutral-600 dark-mode:text-neutral-400">
+            <div className="text-sm text-neutral-600 dark:text-neutral-400">
               Total Spent
             </div>
           </div>
-          <div className="bg-neutral-50 dark-mode:bg-neutral-700 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-neutral-900 dark-mode:text-neutral-50">
+          <div className="bg-neutral-50 dark:bg-neutral-700 rounded-lg p-4 text-center">
+            <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
               {groupData.expenses.length}
             </div>
-            <div className="text-sm text-neutral-600 dark-mode:text-neutral-400">
+            <div className="text-sm text-neutral-600 dark:text-neutral-400">
               Expenses
             </div>
           </div>
-          <div className="bg-neutral-50 dark-mode:bg-neutral-700 rounded-lg p-4 text-center">
-            <div className="text-2xl font-bold text-neutral-900 dark-mode:text-neutral-50">
+          <div className="bg-neutral-50 dark:bg-neutral-700 rounded-lg p-4 text-center">
+            <div className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
               {groupData.members.length}
             </div>
-            <div className="text-sm text-neutral-600 dark-mode:text-neutral-400">
+            <div className="text-sm text-neutral-600 dark:text-neutral-400">
               Members
             </div>
           </div>
@@ -208,8 +208,8 @@ export function GroupDetail() {
       </div>
 
       {/* Tabs */}
-      <div className="bg-white dark-mode:bg-neutral-800 rounded-lg border border-neutral-200 dark-mode:border-neutral-700">
-        <div className="border-b border-neutral-200 dark-mode:border-neutral-700">
+      <div className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700">
+        <div className="border-b border-neutral-200 dark:border-neutral-700">
           <nav className="flex space-x-8 px-6">
             {(['expenses', 'members', 'settings'] as const).map((tab) => (
               <button
@@ -217,8 +217,8 @@ export function GroupDetail() {
                 onClick={() => setActiveTab(tab)}
                 className={
                   activeTab === tab
-                    ? 'py-4 px-1 border-b-2 border-green-500 text-green-600 dark-mode:text-green-400 font-medium text-sm transition-colors'
-                    : 'py-4 px-1 border-b-2 border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300 dark-mode:text-neutral-400 dark-mode:hover:text-neutral-300 font-medium text-sm transition-colors'
+                    ? 'py-4 px-1 border-b-2 border-green-500 text-green-600 dark:text-green-400 font-medium text-sm transition-colors'
+                    : 'py-4 px-1 border-b-2 border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300 dark:text-neutral-400 dark:hover:text-neutral-300 font-medium text-sm transition-colors'
                 }
               >
                 {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -236,10 +236,10 @@ export function GroupDetail() {
                   {groupData.expenses.map((expense) => (
                     <div
                       key={expense.id}
-                      className="flex items-center justify-between p-4 border border-neutral-200 dark-mode:border-neutral-600 rounded-lg hover:bg-neutral-50 dark-mode:hover:bg-neutral-700 transition-colors"
+                      className="flex items-center justify-between p-4 border border-neutral-200 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-neutral-200 dark-mode:bg-neutral-600 rounded-full flex items-center justify-center">
+                        <div className="w-10 h-10 bg-neutral-200 dark:bg-neutral-600 rounded-full flex items-center justify-center">
                           {expense.payer.photoUrl ? (
                             <img
                               src={expense.payer.photoUrl}
@@ -247,34 +247,34 @@ export function GroupDetail() {
                               className="w-10 h-10 rounded-full"
                             />
                           ) : (
-                            <span className="text-sm font-medium text-neutral-700 dark-mode:text-neutral-300">
+                            <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
                               {expense.payer.name.charAt(0)}
                             </span>
                           )}
                         </div>
                         <div>
-                          <div className="font-medium text-neutral-900 dark-mode:text-neutral-50">
+                          <div className="font-medium text-neutral-900 dark:text-neutral-50">
                             {expense.description}
                           </div>
-                          <div className="text-sm text-neutral-600 dark-mode:text-neutral-400">
+                          <div className="text-sm text-neutral-600 dark:text-neutral-400">
                             Paid by {expense.payer.name} •{' '}
                             {format(new Date(expense.date), 'MMM d, yyyy')}
                           </div>
                           {expense.category && (
-                            <div className="text-xs text-neutral-500 dark-mode:text-neutral-400">
+                            <div className="text-xs text-neutral-500 dark:text-neutral-400">
                               {expense.category}
                             </div>
                           )}
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="font-semibold text-neutral-900 dark-mode:text-neutral-50">
+                        <div className="font-semibold text-neutral-900 dark:text-neutral-50">
                           {formatCurrency(
                             expense.amountCents,
                             expense.currency
                           )}
                         </div>
-                        <div className="text-xs text-neutral-500 dark-mode:text-neutral-400">
+                        <div className="text-xs text-neutral-500 dark:text-neutral-400">
                           {expense.participants.length} participant
                           {expense.participants.length !== 1 ? 's' : ''}
                         </div>
@@ -283,12 +283,12 @@ export function GroupDetail() {
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12 px-6 bg-white dark-mode:bg-neutral-800 rounded-lg border border-neutral-200 dark-mode:border-neutral-700">
+                <div className="text-center py-12 px-6 bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700">
                   <div className="text-6xl mb-4 opacity-60">💸</div>
-                  <h3 className="text-lg font-semibold text-neutral-900 dark-mode:text-neutral-50 mb-2">
+                  <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50 mb-2">
                     No expenses yet
                   </h3>
-                  <p className="text-neutral-600 dark-mode:text-neutral-400 mb-6 max-w-sm mx-auto">
+                  <p className="text-neutral-600 dark:text-neutral-400 mb-6 max-w-sm mx-auto">
                     Start tracking expenses by adding your first one!
                   </p>
                   <div className="flex justify-center">
@@ -303,7 +303,7 @@ export function GroupDetail() {
           {activeTab === 'members' && (
             <div className="space-y-4">
               <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-neutral-900 dark-mode:text-neutral-50">
+                <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
                   Members ({groupData.members.length})
                 </h3>
                 {isOwnerOrAdmin && (
@@ -317,10 +317,10 @@ export function GroupDetail() {
                 {groupData.members.map((member) => (
                   <div
                     key={member.id}
-                    className="flex items-center justify-between p-4 border border-neutral-200 dark-mode:border-neutral-600 rounded-lg"
+                    className="flex items-center justify-between p-4 border border-neutral-200 dark:border-neutral-600 rounded-lg"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-neutral-200 dark-mode:bg-neutral-600 rounded-full flex items-center justify-center">
+                      <div className="w-10 h-10 bg-neutral-200 dark:bg-neutral-600 rounded-full flex items-center justify-center">
                         {member.user.photoUrl ? (
                           <img
                             src={member.user.photoUrl}
@@ -328,20 +328,20 @@ export function GroupDetail() {
                             className="w-10 h-10 rounded-full"
                           />
                         ) : (
-                          <span className="text-sm font-medium text-neutral-700 dark-mode:text-neutral-300">
+                          <span className="text-sm font-medium text-neutral-700 dark:text-neutral-300">
                             {member.user.name.charAt(0)}
                           </span>
                         )}
                       </div>
                       <div>
-                        <div className="font-medium text-neutral-900 dark-mode:text-neutral-50">
+                        <div className="font-medium text-neutral-900 dark:text-neutral-50">
                           {member.user.name}
                         </div>
-                        <div className="text-sm text-neutral-600 dark-mode:text-neutral-400">
+                        <div className="text-sm text-neutral-600 dark:text-neutral-400">
                           {member.user.email}
                         </div>
                         {member.user.venmoHandle && (
-                          <div className="text-xs text-neutral-500 dark-mode:text-neutral-400">
+                          <div className="text-xs text-neutral-500 dark:text-neutral-400">
                             Venmo: @{member.user.venmoHandle}
                           </div>
                         )}
@@ -351,15 +351,15 @@ export function GroupDetail() {
                       <span
                         className={
                           member.role === 'OWNER'
-                            ? 'px-2 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-800 dark-mode:bg-purple-900 dark-mode:text-purple-200'
+                            ? 'px-2 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
                             : member.role === 'ADMIN'
-                              ? 'px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800 dark-mode:bg-blue-900 dark-mode:text-blue-200'
-                              : 'px-2 py-1 text-xs font-medium rounded-full bg-neutral-100 text-neutral-800 dark-mode:bg-neutral-700 dark-mode:text-neutral-200'
+                              ? 'px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                              : 'px-2 py-1 text-xs font-medium rounded-full bg-neutral-100 text-neutral-800 dark:bg-neutral-700 dark:text-neutral-200'
                         }
                       >
                         {member.role.toLowerCase()}
                       </span>
-                      <span className="text-xs text-neutral-500 dark-mode:text-neutral-400">
+                      <span className="text-xs text-neutral-500 dark:text-neutral-400">
                         Joined{' '}
                         {formatDistanceToNow(new Date(member.joinedAt), {
                           addSuffix: true,
@@ -376,45 +376,45 @@ export function GroupDetail() {
           {activeTab === 'settings' && (
             <div className="space-y-6">
               <div>
-                <h3 className="text-lg font-semibold text-neutral-900 dark-mode:text-neutral-50 mb-4">
+                <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50 mb-4">
                   Group Settings
                 </h3>
 
                 <div className="space-y-4">
-                  <div className="p-4 border border-neutral-200 dark-mode:border-neutral-600 rounded-lg">
-                    <h4 className="font-medium text-neutral-900 dark-mode:text-neutral-50 mb-2">
+                  <div className="p-4 border border-neutral-200 dark:border-neutral-600 rounded-lg">
+                    <h4 className="font-medium text-neutral-900 dark:text-neutral-50 mb-2">
                       Group Information
                     </h4>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-neutral-600 dark-mode:text-neutral-400">
+                        <span className="text-neutral-600 dark:text-neutral-400">
                           Name:
                         </span>
-                        <span className="text-neutral-900 dark-mode:text-neutral-50">
+                        <span className="text-neutral-900 dark:text-neutral-50">
                           {groupData.name}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-neutral-600 dark-mode:text-neutral-400">
+                        <span className="text-neutral-600 dark:text-neutral-400">
                           Currency:
                         </span>
-                        <span className="text-neutral-900 dark-mode:text-neutral-50">
+                        <span className="text-neutral-900 dark:text-neutral-50">
                           {groupData.currency}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-neutral-600 dark-mode:text-neutral-400">
+                        <span className="text-neutral-600 dark:text-neutral-400">
                           Created:
                         </span>
-                        <span className="text-neutral-900 dark-mode:text-neutral-50">
+                        <span className="text-neutral-900 dark:text-neutral-50">
                           {format(new Date(groupData.createdAt), 'MMM d, yyyy')}
                         </span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-neutral-600 dark-mode:text-neutral-400">
+                        <span className="text-neutral-600 dark:text-neutral-400">
                           Group ID:
                         </span>
-                        <span className="text-neutral-900 dark-mode:text-neutral-50 font-mono text-xs">
+                        <span className="text-neutral-900 dark:text-neutral-50 font-mono text-xs">
                           {groupData.id}
                         </span>
                       </div>
@@ -422,11 +422,11 @@ export function GroupDetail() {
                   </div>
 
                   {isOwnerOrAdmin && (
-                    <div className="p-4 border border-red-200 dark-mode:border-red-800 rounded-lg bg-red-50 dark-mode:bg-red-950">
-                      <h4 className="font-medium text-red-900 dark-mode:text-red-100 mb-2">
+                    <div className="p-4 border border-red-200 dark:border-red-800 rounded-lg bg-red-50 dark:bg-red-950">
+                      <h4 className="font-medium text-red-900 dark:text-red-100 mb-2">
                         Danger Zone
                       </h4>
-                      <p className="text-sm text-red-700 dark-mode:text-red-300 mb-3">
+                      <p className="text-sm text-red-700 dark:text-red-300 mb-3">
                         Deleting this group will permanently remove all expenses
                         and member data. This action cannot be undone.
                       </p>

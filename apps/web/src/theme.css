@@ -11,7 +11,7 @@
   --radius-md: 0.75rem;
   --radius-lg: 1rem;
 
-  /* Brand colors */
+  /* Brand colors - Main focus */
   --color-brand-50: #f0f9e4;
   --color-brand-100: #d9f0c0;
   --color-brand-200: #b8e497;
@@ -23,50 +23,26 @@
   --color-brand-800: #4a8515;
   --color-brand-900: #3d6f11;
 
-  /* Button colors */
-  --color-brand-solid: #76bd22;
-  --color-brand-solid_hover: #67aa1e;
-  --color-button-primary-icon: white;
-  --color-button-primary-icon_hover: white;
-
-  /* Primary colors */
-  --color-primary: white;
-  --color-primary_hover: #f5f5f5;
-
-  /* Secondary text colors */
-  --color-secondary: #171717;
-  --color-secondary_hover: #0a0a0a;
-
-  /* Tertiary colors */
-  --color-tertiary: #525252;
-  --color-tertiary_hover: #404040;
-
-  /* Foreground colors */
-  --color-fg-quaternary: #737373;
-  --color-fg-quaternary_hover: #525252;
-
-  /* Disabled colors */
-  --color-disabled: #e5e5e5;
-  --color-disabled_subtle: #f5f5f5;
-  --color-fg-disabled: #a3a3a3;
-  --color-fg-disabled_subtle: #d4d4d4;
-
-  /* Outline color */
-  --color-outline-brand: #76bd22;
-
-  /* Box shadows */
-  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-xs-skeumorphic: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  /* Neutral colors for Tailwind CSS - Standard scale */
+  --color-neutral-25: #fcfcfd;
+  --color-neutral-50: #f9fafb;
+  --color-neutral-100: #f3f4f6;
+  --color-neutral-200: #e5e7eb;
+  --color-neutral-300: #d1d5db;
+  --color-neutral-400: #9ca3af;
+  --color-neutral-500: #6b7280;
+  --color-neutral-600: #4b5563;
+  --color-neutral-700: #374151;
+  --color-neutral-800: #1f2937;
+  --color-neutral-900: #111827;
+  --color-neutral-950: #030712;
 }
 
-/* Example: dark mode overrides (optional) */
+/* Dark mode brand color adjustments only */
 @layer base {
   .dark-mode {
-    --color-primary: #171717;
-    --color-primary_hover: #262626;
-    --color-secondary: #fafafa;
-    --color-secondary_hover: white;
-    --color-tertiary: #a3a3a3;
-    --color-tertiary_hover: #d4d4d4;
+    /* Brand colors - slightly brighter for dark mode contrast */
+    --color-brand-500: #84cc16;
+    --color-brand-600: #76bd22;
   }
 }

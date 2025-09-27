@@ -12,7 +12,7 @@ export function Navigation() {
   const location = useLocation();
 
   return (
-    <aside className="w-64 border-r border-neutral-200 dark-mode:border-neutral-700 p-4 bg-white dark-mode:bg-neutral-900 hidden sm:block">
+    <aside className="w-64 border-r border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-900 hidden sm:block">
       <div className="mb-8">
         <h1 className="text-xl font-bold text-green-600">Group Pay</h1>
       </div>
@@ -22,10 +22,10 @@ export function Navigation() {
             key={item.to}
             to={item.to}
             className={cn(
-              'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-neutral-100 dark-mode:hover:bg-neutral-800',
+              'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-gray-100 dark:hover:bg-gray-800',
               location.pathname === item.to
-                ? 'bg-neutral-100 text-neutral-900 dark-mode:bg-neutral-800 dark-mode:text-neutral-50'
-                : 'text-neutral-600 dark-mode:text-neutral-400'
+                ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-gray-50'
+                : 'text-gray-600 dark:text-gray-400'
             )}
           >
             <span className="text-base">{item.icon}</span>

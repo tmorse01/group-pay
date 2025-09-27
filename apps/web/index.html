@@ -4,7 +4,31 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    <title>GroupPay</title>
+    <script>
+      // Prevent flash of light mode by initializing theme immediately
+      (function () {
+        const saved = localStorage.getItem('ui-theme');
+        const prefersDark = window.matchMedia(
+          '(prefers-color-scheme: dark)'
+        ).matches;
+
+        let shouldUseDark = false;
+
+        if (saved === 'dark') {
+          shouldUseDark = true;
+        } else if (saved === 'light') {
+          shouldUseDark = false;
+        } else {
+          // system or no saved preference
+          shouldUseDark = prefersDark;
+        }
+
+        if (shouldUseDark) {
+          document.documentElement.classList.add('dark-mode');
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

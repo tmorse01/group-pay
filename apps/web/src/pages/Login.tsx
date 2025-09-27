@@ -20,13 +20,13 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark-mode:bg-neutral-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark:bg-neutral-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
           <h1 className="text-center text-3xl font-bold text-green-600 mb-2">
             Group Pay
           </h1>
-          <h2 className="text-center text-2xl font-bold text-neutral-900 dark-mode:text-neutral-50">
+          <h2 className="text-center text-2xl font-bold text-neutral-900 dark:text-neutral-50">
             Sign in to your account
           </h2>
         </div>
@@ -36,7 +36,7 @@ export function Login() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-neutral-700 dark-mode:text-neutral-300"
+                className="block text-sm font-medium text-neutral-700 dark:text-neutral-300"
               >
                 Email address
               </label>
@@ -48,7 +48,7 @@ export function Login() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-neutral-300 dark-mode:border-neutral-600 rounded-md shadow-sm bg-white dark-mode:bg-neutral-800 text-neutral-900 dark-mode:text-neutral-50 placeholder-neutral-500 focus:outline-none focus:ring-green-500 focus:border-green-500"
+                className="mt-1 block w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md shadow-sm bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-50 placeholder-neutral-500 focus:outline-none focus:ring-green-500 focus:border-green-500"
                 placeholder="Enter your email"
               />
             </div>
@@ -56,7 +56,7 @@ export function Login() {
             <div>
               <label
                 htmlFor="password"
-                className="block text-sm font-medium text-neutral-700 dark-mode:text-neutral-300"
+                className="block text-sm font-medium text-neutral-700 dark:text-neutral-300"
               >
                 Password
               </label>
@@ -68,7 +68,7 @@ export function Login() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-neutral-300 dark-mode:border-neutral-600 rounded-md shadow-sm bg-white dark-mode:bg-neutral-800 text-neutral-900 dark-mode:text-neutral-50 placeholder-neutral-500 focus:outline-none focus:ring-green-500 focus:border-green-500"
+                className="mt-1 block w-full px-3 py-2 border border-neutral-300 dark:border-neutral-600 rounded-md shadow-sm bg-white dark:bg-neutral-800 text-neutral-900 dark:text-neutral-50 placeholder-neutral-500 focus:outline-none focus:ring-green-500 focus:border-green-500"
                 placeholder="Enter your password"
               />
             </div>
@@ -90,7 +90,7 @@ export function Login() {
           </div>
         </form>
 
-        <div className="text-center text-sm text-neutral-600 dark-mode:text-neutral-400">
+        <div className="text-center text-sm text-neutral-600 dark:text-neutral-400">
           Don't have an account?{' '}
           <a
             href="#"

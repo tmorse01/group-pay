@@ -25,7 +25,7 @@
   transition-timing-function: inherit;
 }
 
-/* Base typography */
+/* Base typography and dark mode support */
 html,
 body {
   font-family: var(
@@ -39,4 +39,26 @@ body {
   );
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Ensure root elements adapt to dark mode */
+html {
+  background-color: white;
+  color: #111827;
+}
+
+html.dark-mode {
+  background-color: #111827;
+  color: #f9fafb;
+}
+
+body {
+  background-color: inherit;
+  color: inherit;
+}
+
+#root {
+  background-color: inherit;
+  color: inherit;
+  min-height: 100vh;
 }

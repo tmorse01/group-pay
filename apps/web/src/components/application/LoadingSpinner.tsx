@@ -5,7 +5,10 @@ interface LoadingSpinnerProps {
   className?: string;
 }
 
-export function LoadingSpinner({ size = 'md', className }: LoadingSpinnerProps) {
+export function LoadingSpinner({
+  size = 'md',
+  className,
+}: LoadingSpinnerProps) {
   const sizeClasses = {
     sm: 'w-4 h-4',
     md: 'w-6 h-6',
@@ -15,7 +18,7 @@ export function LoadingSpinner({ size = 'md', className }: LoadingSpinnerProps) 
   return (
     <svg
       className={cx(
-        'animate-spin text-neutral-600 dark-mode:text-neutral-400',
+        'animate-spin text-neutral-600 dark:text-neutral-400',
         sizeClasses[size],
         className
       )}
