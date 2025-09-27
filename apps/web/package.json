@@ -21,6 +21,7 @@
     "@tanstack/react-query-devtools": "^5.90.2",
     "@untitledui/icons": "^0.0.19",
     "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "dayjs": "^1.11.9",
     "react": "^19.1.1",
     "react-aria-components": "^1.12.2",

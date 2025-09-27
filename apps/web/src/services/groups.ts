@@ -12,6 +12,70 @@ interface Group {
   updatedAt: string;
 }
 
+interface CreateGroupResponse {
+  id: string;
+  name: string;
+  currency: string;
+  createdAt: string;
+  memberCount: number;
+}
+
+interface GroupMember {
+  id: string;
+  role: string;
+  joinedAt: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    photoUrl?: string;
+    venmoHandle?: string;
+    paypalLink?: string;
+  };
+}
+
+interface GroupExpense {
+  id: string;
+  description: string;
+  amountCents: number;
+  currency: string;
+  category?: string;
+  date: string;
+  payer: {
+    id: string;
+    name: string;
+    photoUrl?: string;
+  };
+  participants: Array<{
+    id: string;
+    user: {
+      id: string;
+      name: string;
+      photoUrl?: string;
+    };
+  }>;
+  createdAt: string;
+}
+
+interface GroupDetail {
+  id: string;
+  name: string;
+  currency: string;
+  createdAt: string;
+  members: GroupMember[];
+  expenses: GroupExpense[];
+}
+
+interface GroupListItem {
+  id: string;
+  name: string;
+  currency: string;
+  memberCount: number;
+  expenseCount: number;
+  lastActivity: string;
+  createdAt: string;
+}
+
 interface CreateGroupRequest {
   name: string;
   description?: string;
@@ -26,15 +90,31 @@ interface UpdateGroupRequest {
 
 // API functions
 const groupsApi = {
-  getGroups: (): Promise<Group[]> => api.get('/api/groups'),
+  getGroups: async (): Promise<GroupListItem[]> => {
+    const response = await api.get<{ groups: GroupListItem[] }>('/api/groups');
+    return response.groups;
+  },
 
-  getGroup: (id: string): Promise<Group> => api.get(`/api/groups/${id}`),
+  getGroup: (id: string): Promise<{ group: GroupDetail }> =>
+    api.get(`/api/groups/${id}`),
 
-  createGroup: (data: CreateGroupRequest): Promise<Group> =>
-    api.post('/api/groups', data),
+  createGroup: async (
+    data: CreateGroupRequest
+  ): Promise<{ group: CreateGroupResponse }> => {
+    const response = await api.post<{ group: CreateGroupResponse }>(
+      '/api/groups',
+      data
+    );
+    return response;
+  },
 
-  updateGroup: (id: string, data: UpdateGroupRequest): Promise<Group> =>
-    api.put(`/api/groups/${id}`, data),
+  updateGroup: async (
+    id: string,
+    data: UpdateGroupRequest
+  ): Promise<{ group: Group }> => {
+    const response = await api.put<{ group: Group }>(`/api/groups/${id}`, data);
+    return response;
+  },
 
   deleteGroup: (id: string): Promise<void> => api.delete(`/api/groups/${id}`),
 };
@@ -62,14 +142,35 @@ export function useCreateGroup() {
 
   return useMutation({
     mutationFn: groupsApi.createGroup,
-    onSuccess: (newGroup) => {
+    onSuccess: (response) => {
+      const newGroup = response.group;
+
+      // Convert Group to GroupListItem for the list cache
+      const groupListItem: GroupListItem = {
+        id: newGroup.id,
+        name: newGroup.name,
+        currency: newGroup.currency,
+        createdAt: newGroup.createdAt,
+        memberCount: 1, // New group starts with just the creator
+        expenseCount: 0,
+        lastActivity: newGroup.createdAt,
+      };
+
       // Update the groups list cache
-      queryClient.setQueryData<Group[]>(['groups'], (old) =>
-        old ? [...old, newGroup] : [newGroup]
+      queryClient.setQueryData<GroupListItem[]>(['groups'], (old) =>
+        old ? [...old, groupListItem] : [groupListItem]
       );
 
-      // Cache the new group individually
-      queryClient.setQueryData(['groups', newGroup.id], newGroup);
+      // Cache the new group individually (convert to GroupDetail format)
+      const groupDetail: GroupDetail = {
+        id: newGroup.id,
+        name: newGroup.name,
+        currency: newGroup.currency,
+        createdAt: newGroup.createdAt,
+        members: [],
+        expenses: [],
+      };
+      queryClient.setQueryData(['groups', newGroup.id], { group: groupDetail });
     },
   });
 }
@@ -80,16 +181,36 @@ export function useUpdateGroup() {
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateGroupRequest }) =>
       groupsApi.updateGroup(id, data),
-    onSuccess: (updatedGroup) => {
+    onSuccess: (response, { id }) => {
+      const updatedGroup = response.group;
+
       // Update the specific group cache
-      queryClient.setQueryData(['groups', updatedGroup.id], updatedGroup);
+      queryClient.setQueryData(
+        ['groups', id],
+        (old: { group: GroupDetail } | undefined) => {
+          if (!old) return old;
+          return {
+            group: {
+              ...old.group,
+              ...updatedGroup,
+            },
+          };
+        }
+      );
 
       // Update the group in the groups list
-      queryClient.setQueryData<Group[]>(['groups'], (old) =>
-        old?.map((group) =>
-          group.id === updatedGroup.id ? updatedGroup : group
-        )
-      );
+      queryClient.setQueryData<GroupListItem[]>(['groups'], (old) => {
+        if (!old) return old;
+        return old.map((group) =>
+          group.id === id
+            ? {
+                ...group,
+                name: updatedGroup.name,
+                currency: updatedGroup.currency,
+              }
+            : group
+        );
+      });
     },
   });
 }
@@ -101,7 +222,7 @@ export function useDeleteGroup() {
     mutationFn: groupsApi.deleteGroup,
     onSuccess: (_, deletedId) => {
       // Remove from groups list
-      queryClient.setQueryData<Group[]>(['groups'], (old) =>
+      queryClient.setQueryData<GroupListItem[]>(['groups'], (old) =>
         old?.filter((group) => group.id !== deletedId)
       );
 

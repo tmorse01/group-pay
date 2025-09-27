@@ -7,10 +7,16 @@ Welcome to the Group Pay documentation! This guide will help you understand, imp
 ### Features Documentation
 
 - **[Authentication System](./features/authentication.md)** - Complete authentication implementation with JWT tokens, secure cookies, and comprehensive security measures
+- **[Groups Architecture](./features/groups-architecture.md)** - Comprehensive overview of the groups feature architecture and implementation
+
+### Component Documentation
+
+- **[Groups Page](./components/groups-page.md)** - Detailed documentation for the main groups listing page component
 
 ### API Reference
 
 - **[Authentication API](./api/authentication.md)** - Detailed API endpoints for user authentication, registration, and session management
+- **[Groups Service API](./api/groups-service.md)** - Complete API documentation for groups service layer with React Query integration
 
 ### Implementation Guides
 
@@ -98,16 +104,16 @@ pnpm test:coverage
 
 ## 📋 Feature Implementation Status
 
-| Feature             | Status      | Documentation                        |
-| ------------------- | ----------- | ------------------------------------ |
-| Authentication      | ✅ Complete | [Docs](./features/authentication.md) |
-| User Management     | 🟡 Planned  | Coming soon                          |
-| Group Management    | 🟡 Planned  | Coming soon                          |
-| Expense Tracking    | 🟡 Planned  | Coming soon                          |
-| Settlement System   | 🟡 Planned  | Coming soon                          |
-| Receipt Upload      | 🟡 Planned  | Coming soon                          |
-| Smart Splits        | 🟡 Planned  | Coming soon                          |
-| Payment Integration | 🟡 Planned  | Coming soon                          |
+| Feature             | Status      | Documentation                             |
+| ------------------- | ----------- | ----------------------------------------- |
+| Authentication      | ✅ Complete | [Docs](./features/authentication.md)      |
+| Groups Management   | ✅ Complete | [Docs](./features/groups-architecture.md) |
+| User Management     | 🟡 Planned  | Coming soon                               |
+| Expense Tracking    | 🟡 Planned  | Coming soon                               |
+| Settlement System   | 🟡 Planned  | Coming soon                               |
+| Receipt Upload      | 🟡 Planned  | Coming soon                               |
+| Smart Splits        | 🟡 Planned  | Coming soon                               |
+| Payment Integration | 🟡 Planned  | Coming soon                               |
 
 ## 🔑 Key Features
 
@@ -121,6 +127,16 @@ pnpm test:coverage
 - **Password Security**: Argon2 hashing with industry-standard parameters
 - **API Protection**: Middleware-based route protection
 - **Error Handling**: Comprehensive error responses and logging
+
+#### Groups Management
+
+- **Groups Dashboard**: Main groups listing page with search and filtering
+- **Group Creation**: One-click group creation with smart defaults
+- **Responsive Design**: Mobile-first responsive interface
+- **Real-time Search**: Instant filtering of groups without API calls
+- **Error Handling**: Comprehensive error states with recovery options
+- **Loading States**: Smooth loading indicators and optimistic updates
+- **Data Caching**: Intelligent caching with React Query for performance
 
 ### 🟡 Planned Features
 
