@@ -10,7 +10,7 @@ export function Groups() {
   const [searchQuery, setSearchQuery] = useState('');
   const { data: groups, isLoading, error, refetch } = useGroups();
   const createGroupMutation = useCreateGroup();
-  console.log('groups:', groups);
+
   const filteredGroups = groups?.filter((group) =>
     group.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
