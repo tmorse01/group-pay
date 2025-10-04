@@ -1,6 +1,28 @@
 # Copilot Project Prompt — “Group Pay” (Group Expense Tracker, Phase 1)
 
-You are generating a **TypeScript monorepo** for an MVP of a **Group Expense Tracker** called **Group Pay**.  
+You are generating a **TypeScript monorepo** for an MVP ### Front End (`apps/web`)
+
+**Stack**: React 18 + Vite + TypeScript, **UntitledUI** components, React Router v6, **TanStack Query**, **Zod**, **Day.js**.
+
+### Environment
+
+`.env.local.example`
+
+```
+VITE_API_URL=http://localhost:4000
+```
+
+### Component Guidelines
+
+**IMPORTANT**: Always use UntitledUI components from `@/components/base/*` instead of basic HTML elements:
+
+- Use `<Button>` from `@/components/base/buttons/button` instead of `<button>`
+- Use `<Input>` from `@/components/base/inputs/input` instead of `<input>`
+- Use `<Select>` from `@/components/base/select/select` instead of `<select>`
+- Use `<Modal>` from `@/components/application/modals/modal` instead of custom modal implementations
+- Use UntitledUI form components with proper validation patterns
+
+Always prefer the design system components to maintain consistency and leverage built-in accessibility features.p Expense Tracker** called **Group Pay\*\*.  
 Deliver a production-ready scaffold with the following structure, code, and configs.
 
 ## Monorepo

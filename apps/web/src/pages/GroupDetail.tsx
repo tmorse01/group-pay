@@ -6,6 +6,7 @@ import { LoadingSpinner } from '../components/application/LoadingSpinner';
 import { ErrorState } from '../components/application/ErrorState';
 import { AddExpenseModal } from '../components/application/modals/AddExpenseModal';
 import { AddMemberModal } from '../components/application/modals/AddMemberModal';
+import { DeleteExpenseModal } from '../components/application/modals/DeleteExpenseModal';
 import { formatCurrency } from '../utils/currency';
 import { formatDistanceToNow, format } from 'date-fns';
 
@@ -19,6 +20,13 @@ export function GroupDetail() {
   const [editName, setEditName] = useState('');
   const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] = useState(false);
   const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
+  const [expenseToDelete, setExpenseToDelete] = useState<{
+    id: string;
+    description: string;
+    amountCents: number;
+    currency: string;
+    payer: { name: string };
+  } | null>(null);
 
   const { data: group, isLoading, error, refetch } = useGroup(id!);
   const updateGroupMutation = useUpdateGroup();
@@ -244,9 +252,9 @@ export function GroupDetail() {
                   {groupData.expenses.map((expense) => (
                     <div
                       key={expense.id}
-                      className="flex items-center justify-between p-4 border border-neutral-200 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors"
+                      className="flex items-center justify-between p-4 border border-neutral-200 dark:border-neutral-600 rounded-lg hover:bg-neutral-50 dark:hover:bg-neutral-700 transition-colors group"
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 flex-1">
                         <div className="w-10 h-10 bg-neutral-200 dark:bg-neutral-600 rounded-full flex items-center justify-center">
                           {expense.payer.photoUrl ? (
                             <img
@@ -260,7 +268,7 @@ export function GroupDetail() {
                             </span>
                           )}
                         </div>
-                        <div>
+                        <div className="flex-1">
                           <div className="font-medium text-neutral-900 dark:text-neutral-50">
                             {expense.description}
                           </div>
@@ -275,17 +283,48 @@ export function GroupDetail() {
                           )}
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="font-semibold text-neutral-900 dark:text-neutral-50">
-                          {formatCurrency(
-                            expense.amountCents,
-                            expense.currency
-                          )}
+                      <div className="flex items-center gap-3">
+                        <div className="text-right">
+                          <div className="font-semibold text-neutral-900 dark:text-neutral-50">
+                            {formatCurrency(
+                              expense.amountCents,
+                              expense.currency
+                            )}
+                          </div>
+                          <div className="text-xs text-neutral-500 dark:text-neutral-400">
+                            {expense.participants.length} participant
+                            {expense.participants.length !== 1 ? 's' : ''}
+                          </div>
                         </div>
-                        <div className="text-xs text-neutral-500 dark:text-neutral-400">
-                          {expense.participants.length} participant
-                          {expense.participants.length !== 1 ? 's' : ''}
-                        </div>
+                        {isOwnerOrAdmin && (
+                          <button
+                            onClick={() =>
+                              setExpenseToDelete({
+                                id: expense.id,
+                                description: expense.description,
+                                amountCents: expense.amountCents,
+                                currency: expense.currency,
+                                payer: { name: expense.payer.name },
+                              })
+                            }
+                            className="opacity-0 group-hover:opacity-100 p-2 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg transition-all"
+                            title="Delete expense"
+                          >
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                              />
+                            </svg>
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -479,6 +518,13 @@ export function GroupDetail() {
         onClose={() => setIsAddMemberModalOpen(false)}
         groupId={id!}
         groupName={groupData.name}
+      />
+
+      {/* Delete Expense Modal */}
+      <DeleteExpenseModal
+        isOpen={expenseToDelete !== null}
+        onClose={() => setExpenseToDelete(null)}
+        expense={expenseToDelete}
       />
     </div>
   );
