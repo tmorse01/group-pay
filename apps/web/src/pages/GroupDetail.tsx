@@ -4,6 +4,7 @@ import { Button } from '../components/base/buttons/button';
 import { useGroup, useUpdateGroup, useDeleteGroup } from '../services/groups';
 import { LoadingSpinner } from '../components/application/LoadingSpinner';
 import { ErrorState } from '../components/application/ErrorState';
+import { AddExpenseModal } from '../components/application/modals/AddExpenseModal';
 import { formatCurrency } from '../utils/currency';
 import { formatDistanceToNow, format } from 'date-fns';
 
@@ -15,6 +16,7 @@ export function GroupDetail() {
   >('expenses');
   const [isEditingName, setIsEditingName] = useState(false);
   const [editName, setEditName] = useState('');
+  const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] = useState(false);
 
   const { data: group, isLoading, error, refetch } = useGroup(id!);
   const updateGroupMutation = useUpdateGroup();
@@ -162,7 +164,11 @@ export function GroupDetail() {
           </div>
 
           <div className="flex gap-2">
-            <Button color="primary" size="sm">
+            <Button
+              color="primary"
+              size="sm"
+              onClick={() => setIsAddExpenseModalOpen(true)}
+            >
               Add Expense
             </Button>
             {isOwnerOrAdmin && (
@@ -292,7 +298,12 @@ export function GroupDetail() {
                     Start tracking expenses by adding your first one!
                   </p>
                   <div className="flex justify-center">
-                    <Button color="primary">Add First Expense</Button>
+                    <Button
+                      color="primary"
+                      onClick={() => setIsAddExpenseModalOpen(true)}
+                    >
+                      Add First Expense
+                    </Button>
                   </div>
                 </div>
               )}
@@ -446,6 +457,15 @@ export function GroupDetail() {
           )}
         </div>
       </div>
+
+      {/* Add Expense Modal */}
+      <AddExpenseModal
+        isOpen={isAddExpenseModalOpen}
+        onClose={() => setIsAddExpenseModalOpen(false)}
+        groupId={id!}
+        groupMembers={groupData.members}
+        groupCurrency={groupData.currency}
+      />
     </div>
   );
 }
