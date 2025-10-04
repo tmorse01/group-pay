@@ -5,6 +5,7 @@ import { useGroup, useUpdateGroup, useDeleteGroup } from '../services/groups';
 import { LoadingSpinner } from '../components/application/LoadingSpinner';
 import { ErrorState } from '../components/application/ErrorState';
 import { AddExpenseModal } from '../components/application/modals/AddExpenseModal';
+import { AddMemberModal } from '../components/application/modals/AddMemberModal';
 import { formatCurrency } from '../utils/currency';
 import { formatDistanceToNow, format } from 'date-fns';
 
@@ -17,6 +18,7 @@ export function GroupDetail() {
   const [isEditingName, setIsEditingName] = useState(false);
   const [editName, setEditName] = useState('');
   const [isAddExpenseModalOpen, setIsAddExpenseModalOpen] = useState(false);
+  const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
 
   const { data: group, isLoading, error, refetch } = useGroup(id!);
   const updateGroupMutation = useUpdateGroup();
@@ -318,7 +320,11 @@ export function GroupDetail() {
                   Members ({groupData.members.length})
                 </h3>
                 {isOwnerOrAdmin && (
-                  <Button color="secondary" size="sm">
+                  <Button
+                    color="secondary"
+                    size="sm"
+                    onClick={() => setIsAddMemberModalOpen(true)}
+                  >
                     Add Member
                   </Button>
                 )}
@@ -465,6 +471,14 @@ export function GroupDetail() {
         groupId={id!}
         groupMembers={groupData.members}
         groupCurrency={groupData.currency}
+      />
+
+      {/* Add Member Modal */}
+      <AddMemberModal
+        isOpen={isAddMemberModalOpen}
+        onClose={() => setIsAddMemberModalOpen(false)}
+        groupId={id!}
+        groupName={groupData.name}
       />
     </div>
   );

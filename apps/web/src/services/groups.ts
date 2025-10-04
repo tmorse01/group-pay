@@ -88,6 +88,24 @@ interface UpdateGroupRequest {
   currency?: string;
 }
 
+interface AddMemberRequest {
+  email: string;
+}
+
+interface AddMemberResponse {
+  member: {
+    id: string;
+    role: string;
+    joinedAt: string;
+    user: {
+      id: string;
+      name: string;
+      email: string;
+      photoUrl?: string;
+    };
+  };
+}
+
 // API functions
 const groupsApi = {
   getGroups: async (): Promise<GroupListItem[]> => {
@@ -117,6 +135,17 @@ const groupsApi = {
   },
 
   deleteGroup: (id: string): Promise<void> => api.delete(`/api/groups/${id}`),
+
+  addMember: async (
+    groupId: string,
+    data: AddMemberRequest
+  ): Promise<AddMemberResponse> => {
+    const response = await api.post<AddMemberResponse>(
+      `/api/groups/${groupId}/members`,
+      data
+    );
+    return response;
+  },
 };
 
 // React Query hooks
@@ -228,6 +257,47 @@ export function useDeleteGroup() {
 
       // Remove individual group cache
       queryClient.removeQueries({ queryKey: ['groups', deletedId] });
+    },
+  });
+}
+
+export function useAddMember() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      groupId,
+      data,
+    }: {
+      groupId: string;
+      data: AddMemberRequest;
+    }) => groupsApi.addMember(groupId, data),
+    onSuccess: (response, { groupId }) => {
+      const newMember = response.member;
+
+      // Update the specific group cache to include the new member
+      queryClient.setQueryData(
+        ['groups', groupId],
+        (old: { group: GroupDetail } | undefined) => {
+          if (!old) return old;
+          return {
+            group: {
+              ...old.group,
+              members: [...old.group.members, newMember],
+            },
+          };
+        }
+      );
+
+      // Update the group in the groups list to increment member count
+      queryClient.setQueryData<GroupListItem[]>(['groups'], (old) => {
+        if (!old) return old;
+        return old.map((group) =>
+          group.id === groupId
+            ? { ...group, memberCount: group.memberCount + 1 }
+            : group
+        );
+      });
     },
   });
 }
