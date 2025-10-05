@@ -52,6 +52,9 @@ export const UpdateExpenseSchema = z.object({
   date: z.date().optional(),
   category: z.string().max(50).nullable().optional(),
   notes: z.string().max(500).nullable().optional(),
+  payerId: z.string().uuid().optional(),
+  splitType: ExpenseSplitTypeSchema.optional(),
+  participants: z.array(CreateExpenseParticipantSchema).min(1).optional(),
 });
 
 export type Expense = z.infer<typeof ExpenseSchema>;

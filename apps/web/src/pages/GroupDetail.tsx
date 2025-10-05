@@ -4,7 +4,10 @@ import { Button } from '../components/base/buttons/button';
 import { useGroup, useUpdateGroup, useDeleteGroup } from '../services/groups';
 import { LoadingSpinner } from '../components/application/LoadingSpinner';
 import { ErrorState } from '../components/application/ErrorState';
-import { AddExpenseModal } from '../components/application/modals/AddExpenseModal';
+import {
+  AddExpenseModal,
+  EditExpenseModal,
+} from '../components/application/modals/ExpenseModal';
 import { AddMemberModal } from '../components/application/modals/AddMemberModal';
 import { DeleteExpenseModal } from '../components/application/modals/DeleteExpenseModal';
 import { formatCurrency } from '../utils/currency';
@@ -26,6 +29,28 @@ export function GroupDetail() {
     amountCents: number;
     currency: string;
     payer: { name: string };
+  } | null>(null);
+  const [expenseToEdit, setExpenseToEdit] = useState<{
+    id: string;
+    description: string;
+    amountCents: number;
+    currency: string;
+    date: string;
+    category?: string;
+    payer: {
+      id: string;
+      name: string;
+      photoUrl?: string;
+    };
+    participants: Array<{
+      id: string;
+      shareCents: number;
+      user: {
+        id: string;
+        name: string;
+        photoUrl?: string;
+      };
+    }>;
   } | null>(null);
 
   const { data: group, isLoading, error, refetch } = useGroup(id!);
@@ -297,33 +322,71 @@ export function GroupDetail() {
                           </div>
                         </div>
                         {isOwnerOrAdmin && (
-                          <button
-                            onClick={() =>
-                              setExpenseToDelete({
-                                id: expense.id,
-                                description: expense.description,
-                                amountCents: expense.amountCents,
-                                currency: expense.currency,
-                                payer: { name: expense.payer.name },
-                              })
-                            }
-                            className="opacity-0 group-hover:opacity-100 p-2 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950 rounded-lg transition-all"
-                            title="Delete expense"
-                          >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                              />
-                            </svg>
-                          </button>
+                          <div className="flex gap-1">
+                            <Button
+                              onClick={() =>
+                                setExpenseToEdit({
+                                  id: expense.id,
+                                  description: expense.description,
+                                  amountCents: expense.amountCents,
+                                  currency: expense.currency,
+                                  date: expense.date,
+                                  category: expense.category,
+                                  payer: expense.payer,
+                                  participants: expense.participants,
+                                })
+                              }
+                              color="tertiary"
+                              size="sm"
+                              className="opacity-0 group-hover:opacity-100 text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-950"
+                              title="Edit expense"
+                              iconLeading={
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                                  />
+                                </svg>
+                              }
+                            />
+                            <Button
+                              onClick={() =>
+                                setExpenseToDelete({
+                                  id: expense.id,
+                                  description: expense.description,
+                                  amountCents: expense.amountCents,
+                                  currency: expense.currency,
+                                  payer: { name: expense.payer.name },
+                                })
+                              }
+                              color="tertiary"
+                              size="sm"
+                              className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-950"
+                              title="Delete expense"
+                              iconLeading={
+                                <svg
+                                  className="w-4 h-4"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                  />
+                                </svg>
+                              }
+                            />
+                          </div>
                         )}
                       </div>
                     </div>
@@ -503,7 +566,6 @@ export function GroupDetail() {
         </div>
       </div>
 
-      {/* Add Expense Modal */}
       <AddExpenseModal
         isOpen={isAddExpenseModalOpen}
         onClose={() => setIsAddExpenseModalOpen(false)}
@@ -512,7 +574,6 @@ export function GroupDetail() {
         groupCurrency={groupData.currency}
       />
 
-      {/* Add Member Modal */}
       <AddMemberModal
         isOpen={isAddMemberModalOpen}
         onClose={() => setIsAddMemberModalOpen(false)}
@@ -520,11 +581,18 @@ export function GroupDetail() {
         groupName={groupData.name}
       />
 
-      {/* Delete Expense Modal */}
       <DeleteExpenseModal
         isOpen={expenseToDelete !== null}
         onClose={() => setExpenseToDelete(null)}
         expense={expenseToDelete}
+      />
+
+      <EditExpenseModal
+        isOpen={expenseToEdit !== null}
+        onClose={() => setExpenseToEdit(null)}
+        expense={expenseToEdit}
+        groupMembers={groupData.members}
+        groupCurrency={groupData.currency}
       />
     </div>
   );

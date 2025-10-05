@@ -369,6 +369,20 @@ export default async function expenseRoutes(fastify: FastifyInstance) {
             date: { type: 'string', format: 'date-time' },
             category: { type: 'string', maxLength: 50, nullable: true },
             notes: { type: 'string', maxLength: 500, nullable: true },
+            payerId: { type: 'string', format: 'uuid' },
+            splitType: { type: 'string', enum: ['EQUAL', 'SHARES', 'EXACT'] },
+            participants: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  userId: { type: 'string', format: 'uuid' },
+                  shareCents: { type: 'number', minimum: 0 },
+                },
+                required: ['userId'],
+                additionalProperties: false,
+              },
+            },
           },
         },
       },
@@ -376,7 +390,11 @@ export default async function expenseRoutes(fastify: FastifyInstance) {
     async (request) => {
       const userId = requireAuth(request);
       const { expenseId } = request.params as { expenseId: string };
-      const updates = request.body as UpdateExpenseDto;
+      const updates = request.body as UpdateExpenseDto & {
+        payerId?: string;
+        splitType?: string;
+        participants?: Array<{ userId: string; shareCents?: number }>;
+      };
 
       // Check if expense exists and user has access
       const expense = await prisma.expense.findFirst({
@@ -412,29 +430,64 @@ export default async function expenseRoutes(fastify: FastifyInstance) {
         );
       }
 
-      const updatedExpense = await prisma.expense.update({
-        where: { id: expenseId },
-        data: updates,
-        include: {
-          payer: {
-            select: {
-              id: true,
-              name: true,
-              photoUrl: true,
+      const updatedExpense = await prisma.$transaction(async (tx) => {
+        // Update basic expense fields
+        const baseUpdates = {
+          description: updates.description,
+          amountCents: updates.amountCents,
+          date: updates.date,
+          category: updates.category,
+          notes: updates.notes,
+          payerId: updates.payerId,
+          splitType: updates.splitType,
+        };
+
+        await tx.expense.update({
+          where: { id: expenseId },
+          data: baseUpdates,
+        });
+
+        // Update participants if provided
+        if (updates.participants) {
+          // Delete existing participants
+          await tx.expenseParticipant.deleteMany({
+            where: { expenseId },
+          });
+
+          // Create new participants
+          await tx.expenseParticipant.createMany({
+            data: updates.participants.map((p) => ({
+              expenseId,
+              userId: p.userId,
+              shareCents: p.shareCents || 0,
+            })),
+          });
+        }
+
+        // Return updated expense with relations
+        return await tx.expense.findUnique({
+          where: { id: expenseId },
+          include: {
+            payer: {
+              select: {
+                id: true,
+                name: true,
+                photoUrl: true,
+              },
             },
-          },
-          participants: {
-            include: {
-              user: {
-                select: {
-                  id: true,
-                  name: true,
-                  photoUrl: true,
+            participants: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    name: true,
+                    photoUrl: true,
+                  },
                 },
               },
             },
           },
-        },
+        });
       });
 
       return { expense: updatedExpense };

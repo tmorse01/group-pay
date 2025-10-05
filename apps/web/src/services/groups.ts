@@ -48,6 +48,7 @@ interface GroupExpense {
   };
   participants: Array<{
     id: string;
+    shareCents: number;
     user: {
       id: string;
       name: string;
