@@ -6,6 +6,9 @@ interface User {
   id: string;
   email: string;
   name: string;
+  photoUrl?: string | null;
+  venmoHandle?: string | null;
+  paypalLink?: string | null;
 }
 
 interface AuthContextType {

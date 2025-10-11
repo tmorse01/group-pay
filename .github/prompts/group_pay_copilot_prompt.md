@@ -18,11 +18,16 @@ VITE_API_URL=http://localhost:4000
 
 - Use `<Button>` from `@/components/base/buttons/button` instead of `<button>`
 - Use `<Input>` from `@/components/base/inputs/input` instead of `<input>`
+- Use `<Input>` from `@/components/base/input/input` instead of `<input>`
 - Use `<Select>` from `@/components/base/select/select` instead of `<select>`
 - Use `<Modal>` from `@/components/application/modals/modal` instead of custom modal implementations
 - Use UntitledUI form components with proper validation patterns
 
-Always prefer the design system components to maintain consistency and leverage built-in accessibility features.p Expense Tracker** called **Group Pay\*\*.  
+Always prefer the design system components to maintain consistency and leverage built-in accessibility features.
+
+Form guidelines: see `.github/prompts/forms_guidelines.md` for the dedicated UiForm + UntitledUI inputs usage patterns (required for all app forms).
+
+Expense Tracker** called **Group Pay\*\*.  
 Deliver a production-ready scaffold with the following structure, code, and configs.
 
 ## Monorepo
