@@ -127,7 +127,7 @@ const createGroupMutation = useCreateGroup();
 ### Code Splitting
 
 - Component is part of the main router bundle
-- Heavy date-fns functions are tree-shaken to only include used functions
+- Heavy dayjs functions are tree-shaken to only include used functions
 
 ### Rendering Optimizations
 
@@ -171,7 +171,7 @@ const createGroupMutation = useCreateGroup();
 
 ### Utility Dependencies
 
-- **date-fns**: Date formatting and relative time calculations
+- **dayjs**: Date formatting and relative time calculations
 - **Tailwind CSS**: Styling and responsive design
 
 ## Testing Considerations

@@ -11,7 +11,7 @@ import {
 import { AddMemberModal } from '../components/application/modals/AddMemberModal';
 import { DeleteExpenseModal } from '../components/application/modals/DeleteExpenseModal';
 import { formatCurrency } from '../utils/currency';
-import { formatDistanceToNow, format } from 'date-fns';
+import { formatRelativeDate, formatDate } from '../utils';
 
 export function GroupDetail() {
   const { id } = useParams<{ id: string }>();
@@ -189,12 +189,7 @@ export function GroupDetail() {
                 {groupData.members.length !== 1 ? 's' : ''}
               </span>
               <span>•</span>
-              <span>
-                Created{' '}
-                {formatDistanceToNow(new Date(groupData.createdAt), {
-                  addSuffix: true,
-                })}
-              </span>
+              <span>Created {formatRelativeDate(groupData.createdAt)}</span>
             </div>
           </div>
 
@@ -299,7 +294,7 @@ export function GroupDetail() {
                           </div>
                           <div className="text-sm text-neutral-600 dark:text-neutral-400">
                             Paid by {expense.payer.name} •{' '}
-                            {format(new Date(expense.date), 'MMM d, yyyy')}
+                            {formatDate(expense.date, 'MMM D, YYYY')}
                           </div>
                           {expense.category && (
                             <div className="text-xs text-neutral-500 dark:text-neutral-400">
@@ -479,10 +474,7 @@ export function GroupDetail() {
                         {member.role.toLowerCase()}
                       </span>
                       <span className="text-xs text-neutral-500 dark:text-neutral-400">
-                        Joined{' '}
-                        {formatDistanceToNow(new Date(member.joinedAt), {
-                          addSuffix: true,
-                        })}
+                        Joined {formatRelativeDate(member.joinedAt)}
                       </span>
                     </div>
                   </div>
@@ -526,7 +518,7 @@ export function GroupDetail() {
                           Created:
                         </span>
                         <span className="text-neutral-900 dark:text-neutral-50">
-                          {format(new Date(groupData.createdAt), 'MMM d, yyyy')}
+                          {formatDate(groupData.createdAt, 'MMM D, YYYY')}
                         </span>
                       </div>
                       <div className="flex justify-between">

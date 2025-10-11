@@ -4,7 +4,7 @@ import { Button } from '../components/base/buttons/button';
 import { useGroups, useCreateGroup } from '../services/groups';
 import { LoadingSpinner } from '../components/application/LoadingSpinner';
 import { ErrorState } from '../components/application/ErrorState';
-import { formatDistanceToNow } from 'date-fns';
+import { formatRelativeDate, pluralize } from '../utils';
 
 export function Groups() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -58,7 +58,7 @@ export function Groups() {
           </h1>
           <p className="text-neutral-600 dark:text-neutral-400 mt-1">
             {groups?.length
-              ? `${groups.length} group${groups.length === 1 ? '' : 's'}`
+              ? `${groups.length} ${pluralize(groups.length, 'group')}`
               : 'Manage your expense groups'}
           </p>
         </div>
@@ -109,9 +109,7 @@ export function Groups() {
                       </h3>
                       <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
                         {group.currency} • Created{' '}
-                        {formatDistanceToNow(new Date(group.createdAt), {
-                          addSuffix: true,
-                        })}
+                        {formatRelativeDate(group.createdAt)}
                       </p>
                     </div>
                   </div>
@@ -123,7 +121,7 @@ export function Groups() {
                         {group.memberCount}
                       </div>
                       <div className="text-xs text-neutral-600 dark:text-neutral-400">
-                        {group.memberCount === 1 ? 'Member' : 'Members'}
+                        {pluralize(group.memberCount, 'Member')}
                       </div>
                     </div>
                     <div className="text-center p-3 bg-neutral-50 dark:bg-neutral-700 rounded-lg">
@@ -131,17 +129,14 @@ export function Groups() {
                         {group.expenseCount}
                       </div>
                       <div className="text-xs text-neutral-600 dark:text-neutral-400">
-                        {group.expenseCount === 1 ? 'Expense' : 'Expenses'}
+                        {pluralize(group.expenseCount, 'Expense')}
                       </div>
                     </div>
                   </div>
 
                   {/* Last Activity */}
                   <div className="text-xs text-neutral-500 dark:text-neutral-400">
-                    Last activity:{' '}
-                    {formatDistanceToNow(new Date(group.lastActivity), {
-                      addSuffix: true,
-                    })}
+                    Last activity: {formatRelativeDate(group.lastActivity)}
                   </div>
 
                   {/* Actions */}

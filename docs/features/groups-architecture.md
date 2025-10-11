@@ -155,7 +155,7 @@ UI updates instantly (no API call)
 - **Code Splitting**: Routes loaded on-demand
 - **Memoization**: React Query prevents unnecessary re-renders
 - **Optimistic Updates**: Instant user feedback
-- **Tree Shaking**: Only used date-fns functions included
+- **Tree Shaking**: Only used dayjs functions included
 
 ### Backend Performance
 

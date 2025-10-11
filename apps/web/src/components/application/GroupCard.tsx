@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Button } from '../base/buttons/button';
-import { formatDistanceToNow } from 'date-fns';
+import { formatRelativeDate, pluralize } from '../../utils';
 import { cx } from '../../utils/cx';
 
 interface Group {
@@ -19,8 +19,6 @@ interface GroupCardProps {
 }
 
 export function GroupCard({ group, className }: GroupCardProps) {
-  const lastActivityDate = new Date(group.lastActivity);
-
   return (
     <div
       className={cx(
@@ -36,10 +34,7 @@ export function GroupCard({ group, className }: GroupCardProps) {
               {group.name}
             </h3>
             <p className="text-sm text-neutral-600 dark:text-neutral-400 mt-1">
-              {group.currency} • Created{' '}
-              {formatDistanceToNow(new Date(group.createdAt), {
-                addSuffix: true,
-              })}
+              {group.currency} • Created {formatRelativeDate(group.createdAt)}
             </p>
           </div>
         </div>
@@ -51,8 +46,8 @@ export function GroupCard({ group, className }: GroupCardProps) {
             <div className="text-lg font-semibold text-neutral-900 dark:text-neutral-50\">
               {group.memberCount}
             </div>
-            <div className="text-xs text-neutral-600 dark:text-neutral-400\">
-              {group.memberCount === 1 ? 'Member' : 'Members'}
+            <div className="text-xs text-neutral-600 dark:text-neutral-400">
+              {pluralize(group.memberCount, 'Member')}
             </div>
           </div>
           <div className="text-center p-3 bg-neutral-50 dark:bg-neutral-700 rounded-lg">
@@ -60,15 +55,14 @@ export function GroupCard({ group, className }: GroupCardProps) {
               {group.expenseCount}
             </div>
             <div className="text-xs text-neutral-600 dark:text-neutral-400">
-              {group.expenseCount === 1 ? 'Expense' : 'Expenses'}
+              {pluralize(group.expenseCount, 'Expense')}
             </div>
           </div>
         </div>
 
         {/* Last Activity */}
         <div className="text-xs text-neutral-500 dark:text-neutral-400">
-          Last activity:{' '}
-          {formatDistanceToNow(lastActivityDate, { addSuffix: true })}
+          Last activity: {formatRelativeDate(group.lastActivity)}
         </div>
 
         {/* Actions */}

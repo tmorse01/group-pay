@@ -4,6 +4,8 @@ import { AppShell } from './components/Layout/AppShell';
 import { Dashboard } from './pages/Dashboard';
 import { Groups } from './pages/Groups';
 import { GroupDetail } from './pages/GroupDetail';
+import { Expenses } from './pages/Expenses';
+import { Settings } from './pages/Settings';
 import { Login } from './pages/Login';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -54,6 +56,22 @@ export function Router() {
         element={
           <ProtectedRoute>
             <GroupDetail />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/expenses"
+        element={
+          <ProtectedRoute>
+            <Expenses />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <ProtectedRoute>
+            <Settings />
           </ProtectedRoute>
         }
       />

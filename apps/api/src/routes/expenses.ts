@@ -9,6 +9,7 @@ import {
   UnauthorizedError,
   calculateSplit,
 } from '@group-pay/shared';
+import { expenseSchemas } from '../schemas/expenses';
 
 const prisma = new PrismaClient();
 
@@ -21,84 +22,77 @@ function requireAuth(request: FastifyRequest) {
 }
 
 export default async function expenseRoutes(fastify: FastifyInstance) {
+  // Get all expenses for the authenticated user across all their groups
+  fastify.get(
+    '/',
+    { schema: expenseSchemas.getAllExpenses },
+    async (request) => {
+      const userId = requireAuth(request);
+      const { limit = 50, offset = 0 } = request.query as {
+        limit?: number;
+        offset?: number;
+      };
+
+      // Get all expenses from groups the user is a member of
+      const expenses = await prisma.expense.findMany({
+        where: {
+          group: {
+            members: {
+              some: { userId },
+            },
+          },
+        },
+        include: {
+          payer: {
+            select: {
+              id: true,
+              name: true,
+              photoUrl: true,
+            },
+          },
+          participants: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  name: true,
+                  photoUrl: true,
+                },
+              },
+            },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        skip: offset,
+      });
+
+      const total = await prisma.expense.count({
+        where: {
+          group: {
+            members: {
+              some: { userId },
+            },
+          },
+        },
+      });
+
+      return {
+        expenses,
+        pagination: {
+          total,
+          limit,
+          offset,
+          hasMore: offset + limit < total,
+        },
+      };
+    }
+  );
+
   // Create new expense
   fastify.post(
     '/',
-    {
-      schema: {
-        tags: ['Expenses'],
-        summary: 'Create a new expense',
-        querystring: {
-          type: 'object',
-          properties: {
-            groupId: { type: 'string', format: 'uuid' },
-          },
-          required: ['groupId'],
-        },
-        body: {
-          type: 'object',
-          properties: {
-            description: { type: 'string', minLength: 1, maxLength: 200 },
-            amountCents: { type: 'number', minimum: 1 },
-            currency: {
-              type: 'string',
-              minLength: 3,
-              maxLength: 3,
-              default: 'USD',
-            },
-            date: { type: 'string', format: 'date-time' },
-            category: { type: 'string', maxLength: 50, nullable: true },
-            notes: { type: 'string', maxLength: 500, nullable: true },
-            payerId: { type: 'string', format: 'uuid' },
-            splitType: {
-              type: 'string',
-              enum: ['EQUAL', 'PERCENTAGE', 'SHARES', 'EXACT'],
-            },
-            participants: {
-              type: 'array',
-              minItems: 1,
-              items: {
-                type: 'object',
-                properties: {
-                  userId: { type: 'string', format: 'uuid' },
-                  shareCents: { type: 'number', minimum: 0 },
-                  sharePercentage: { type: 'number', minimum: 0, maximum: 100 },
-                  shareCount: { type: 'number', minimum: 1 },
-                },
-                required: ['userId'],
-              },
-            },
-          },
-          required: [
-            'description',
-            'amountCents',
-            'payerId',
-            'splitType',
-            'participants',
-          ],
-        },
-        response: {
-          201: {
-            type: 'object',
-            properties: {
-              expense: {
-                type: 'object',
-                properties: {
-                  id: { type: 'string' },
-                  description: { type: 'string' },
-                  amountCents: { type: 'number' },
-                  currency: { type: 'string' },
-                  date: { type: 'string' },
-                  category: { type: 'string', nullable: true },
-                  payer: { type: 'object' },
-                  participants: { type: 'array' },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
+    { schema: expenseSchemas.createExpense },
     async (request, reply) => {
       const userId = requireAuth(request);
       const { groupId } = request.query as { groupId: string };
@@ -201,19 +195,7 @@ export default async function expenseRoutes(fastify: FastifyInstance) {
   // Get expense by ID
   fastify.get(
     '/:expenseId',
-    {
-      schema: {
-        tags: ['Expenses'],
-        summary: 'Get expense details',
-        params: {
-          type: 'object',
-          properties: {
-            expenseId: { type: 'string', format: 'uuid' },
-          },
-          required: ['expenseId'],
-        },
-      },
-    },
+    { schema: expenseSchemas.getExpenseById },
     async (request) => {
       const userId = requireAuth(request);
       const { expenseId } = request.params as { expenseId: string };
@@ -267,26 +249,7 @@ export default async function expenseRoutes(fastify: FastifyInstance) {
   // Get expenses for a group
   fastify.get(
     '/group/:groupId',
-    {
-      schema: {
-        tags: ['Expenses'],
-        summary: 'Get all expenses for a group',
-        params: {
-          type: 'object',
-          properties: {
-            groupId: { type: 'string', format: 'uuid' },
-          },
-          required: ['groupId'],
-        },
-        querystring: {
-          type: 'object',
-          properties: {
-            limit: { type: 'number', minimum: 1, maximum: 100 },
-            offset: { type: 'number', minimum: 0 },
-          },
-        },
-      },
-    },
+    { schema: expenseSchemas.getGroupExpenses },
     async (request) => {
       const userId = requireAuth(request);
       const { groupId } = request.params as { groupId: string };
@@ -350,43 +313,7 @@ export default async function expenseRoutes(fastify: FastifyInstance) {
   // Update expense
   fastify.put(
     '/:expenseId',
-    {
-      schema: {
-        tags: ['Expenses'],
-        summary: 'Update expense',
-        params: {
-          type: 'object',
-          properties: {
-            expenseId: { type: 'string', format: 'uuid' },
-          },
-          required: ['expenseId'],
-        },
-        body: {
-          type: 'object',
-          properties: {
-            description: { type: 'string', minLength: 1, maxLength: 200 },
-            amountCents: { type: 'number', minimum: 1 },
-            date: { type: 'string', format: 'date-time' },
-            category: { type: 'string', maxLength: 50, nullable: true },
-            notes: { type: 'string', maxLength: 500, nullable: true },
-            payerId: { type: 'string', format: 'uuid' },
-            splitType: { type: 'string', enum: ['EQUAL', 'SHARES', 'EXACT'] },
-            participants: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  userId: { type: 'string', format: 'uuid' },
-                  shareCents: { type: 'number', minimum: 0 },
-                },
-                required: ['userId'],
-                additionalProperties: false,
-              },
-            },
-          },
-        },
-      },
-    },
+    { schema: expenseSchemas.updateExpense },
     async (request) => {
       const userId = requireAuth(request);
       const { expenseId } = request.params as { expenseId: string };
@@ -497,19 +424,7 @@ export default async function expenseRoutes(fastify: FastifyInstance) {
   // Delete expense
   fastify.delete(
     '/:expenseId',
-    {
-      schema: {
-        tags: ['Expenses'],
-        summary: 'Delete expense',
-        params: {
-          type: 'object',
-          properties: {
-            expenseId: { type: 'string', format: 'uuid' },
-          },
-          required: ['expenseId'],
-        },
-      },
-    },
+    { schema: expenseSchemas.deleteExpense },
     async (request) => {
       const userId = requireAuth(request);
       const { expenseId } = request.params as { expenseId: string };
