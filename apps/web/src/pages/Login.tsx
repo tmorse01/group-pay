@@ -23,7 +23,7 @@ export function Login() {
     <div className="min-h-screen flex items-center justify-center bg-neutral-50 dark:bg-neutral-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h1 className="text-center text-3xl font-bold text-green-600 mb-2">
+          <h1 className="text-center text-3xl font-bold text-brand-600 mb-2">
             Group Pay
           </h1>
           <h2 className="text-center text-2xl font-bold text-neutral-900 dark:text-neutral-50">
@@ -94,7 +94,7 @@ export function Login() {
           Don't have an account?{' '}
           <a
             href="#"
-            className="font-medium text-green-600 hover:text-green-500"
+            className="font-medium text-brand-600 hover:text-brand-500"
           >
             Sign up
           </a>

@@ -294,7 +294,7 @@ export function useAuth() {
   // Dark mode
   'dark:bg-neutral-800 dark:border-neutral-700',
   // Conditional classes
-  isActive && 'bg-green-50 border-green-200',
+  isActive && 'bg-brand-50 border-brand-200',
   className
 )}>
 ```
@@ -306,7 +306,7 @@ export function useAuth() {
 const buttonStyles = sortCx({
   base: 'inline-flex items-center justify-center px-4 py-2 rounded-lg font-medium transition-colors',
   variants: {
-    primary: 'bg-green-600 text-white hover:bg-green-700',
+    primary: 'bg-brand-600 text-white hover:bg-brand-700',
     secondary: 'bg-neutral-200 text-neutral-900 hover:bg-neutral-300',
   },
   sizes: {

@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+import { X, AlertTriangle } from '@untitledui/icons';
 import { Button } from '../../base/buttons/button';
 import { Modal, ModalOverlay, Dialog } from './modal';
 import { Tabs } from '../tabs/tabs';
@@ -9,8 +10,11 @@ import {
   InputField,
   SelectField,
   TextareaField,
+  CurrencyInputField,
 } from '../../../forms';
 import { Select } from '@/components/base/select/select';
+import { InputGroup } from '@/components/base/input/input-group';
+import { InputBase } from '@/components/base/input/input';
 import { formatCurrency } from '../../../utils/currency';
 import type { ExpenseSplitType, UpdateExpenseDto } from '@group-pay/shared';
 
@@ -187,10 +191,10 @@ export function ExpenseModal(props: ExpenseModalProps) {
             (sum, p) => sum + p.shareCents,
             0
           );
+
           if (Math.abs(totalSplitCents - amountCents) > 1) {
-            setParticipantError(
-              'Split amounts must equal the total expense amount'
-            );
+            const errorMsg = `Split amounts must equal the total expense amount. Current splits: ${(totalSplitCents / 100).toFixed(2)}, Expected: ${(amountCents / 100).toFixed(2)}`;
+            setParticipantError(errorMsg);
             return;
           }
 
@@ -251,7 +255,7 @@ export function ExpenseModal(props: ExpenseModalProps) {
   }, [groupMembers, mode, props]);
 
   // Helper function to recalculate equal splits
-  const recalculateEqualSplits = () => {
+  const recalculateEqualSplits = useCallback(() => {
     if (splitType !== 'EQUAL') return;
 
     const currentAmount = form.getFieldValue('amount');
@@ -280,7 +284,26 @@ export function ExpenseModal(props: ExpenseModalProps) {
         return { ...participant, shareCents };
       });
     });
-  };
+
+    // Clear any participant errors when splits are recalculated
+    setParticipantError(null);
+  }, [splitType, form, setParticipants]);
+
+  // Watch for amount changes and auto-recalculate splits in EQUAL mode
+  useEffect(() => {
+    if (splitType !== 'EQUAL') return;
+
+    const unsubscribe = form.store.subscribe(() => {
+      const state = form.store.state;
+      const amount = state.values.amount;
+
+      if (amount && amount !== '') {
+        recalculateEqualSplits();
+      }
+    });
+
+    return unsubscribe;
+  }, [splitType, form.store, recalculateEqualSplits]);
 
   const handleClose = () => {
     form.reset();
@@ -339,10 +362,16 @@ export function ExpenseModal(props: ExpenseModalProps) {
   };
 
   const handleCustomSplitChange = (userId: string, amount: string) => {
-    const shareCents = Math.round(parseFloat(amount || '0') * 100);
-    setParticipants((prev) =>
-      prev.map((p) => (p.userId === userId ? { ...p, shareCents } : p))
-    );
+    const numericValue = parseFloat(amount);
+    const shareCents =
+      isNaN(numericValue) || amount === '' ? 0 : Math.round(numericValue * 100);
+
+    setParticipants((prev) => {
+      const updated = prev.map((p) =>
+        p.userId === userId ? { ...p, shareCents } : p
+      );
+      return updated;
+    });
     setParticipantError(null);
   };
 
@@ -382,21 +411,7 @@ export function ExpenseModal(props: ExpenseModalProps) {
                   color="tertiary"
                   size="sm"
                   aria-label="Close"
-                  iconLeading={
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  }
+                  iconLeading={<X className="w-4 h-4" />}
                 />
               </div>
             </div>
@@ -409,17 +424,33 @@ export function ExpenseModal(props: ExpenseModalProps) {
                   form.handleSubmit();
                 }}
                 footer={
-                  <div className="flex justify-end gap-3 px-6 py-4 border-t border-neutral-200 dark:border-neutral-700">
-                    <Button
-                      color="tertiary"
-                      onClick={handleClose}
-                      isDisabled={isLoading}
-                    >
-                      Cancel
-                    </Button>
-                    <Button color="primary" type="submit" isLoading={isLoading}>
-                      {mode === 'create' ? 'Add Expense' : 'Update Expense'}
-                    </Button>
+                  <div className="px-6 py-4 border-t border-neutral-200 dark:border-neutral-700">
+                    {participantError && (
+                      <div className="mb-3 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                        <div className="flex items-start gap-2">
+                          <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+                          <p className="text-sm text-red-800 dark:text-red-200 font-medium">
+                            {participantError}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                    <div className="flex justify-end gap-3">
+                      <Button
+                        color="tertiary"
+                        onClick={handleClose}
+                        isDisabled={isLoading}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        color="primary"
+                        type="submit"
+                        isLoading={isLoading}
+                      >
+                        {mode === 'create' ? 'Add Expense' : 'Update Expense'}
+                      </Button>
+                    </div>
                   </div>
                 }
               >
@@ -451,13 +482,11 @@ export function ExpenseModal(props: ExpenseModalProps) {
 
                       <form.Field name="amount">
                         {(field) => (
-                          <InputField
+                          <CurrencyInputField
                             field={field}
                             label="Amount"
-                            type="number"
-                            step={0.01}
-                            min={0}
                             placeholder="0.00"
+                            currency={groupCurrency}
                             required
                           />
                         )}
@@ -636,38 +665,43 @@ export function ExpenseModal(props: ExpenseModalProps) {
                                       )}
                                     </span>
                                   ) : (
-                                    <input
-                                      type="number"
-                                      step="0.01"
-                                      min="0"
-                                      value={
-                                        participant.shareCents > 0
-                                          ? (
-                                              participant.shareCents / 100
-                                            ).toFixed(2)
-                                          : ''
-                                      }
-                                      onChange={(e) =>
-                                        handleCustomSplitChange(
-                                          member.user.id,
-                                          e.target.value
-                                        )
-                                      }
-                                      placeholder="0.00"
-                                      className="w-20 px-2 py-1 text-sm border border-neutral-300 dark:border-neutral-600 rounded bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-50 focus:outline-none focus:ring-1 focus:ring-green-500"
-                                    />
+                                    <div className="w-36">
+                                      <InputGroup
+                                        size="sm"
+                                        leadingAddon={
+                                          <InputGroup.Prefix size="sm">
+                                            {groupCurrency}
+                                          </InputGroup.Prefix>
+                                        }
+                                        inputMode="decimal"
+                                        value={
+                                          participant.shareCents > 0
+                                            ? String(
+                                                participant.shareCents / 100
+                                              )
+                                            : ''
+                                        }
+                                        onChange={(val: string) => {
+                                          handleCustomSplitChange(
+                                            member.user.id,
+                                            val
+                                          );
+                                        }}
+                                      >
+                                        <InputBase
+                                          key={`custom-split-${member.user.id}`}
+                                          type="number"
+                                          placeholder="0.00"
+                                          size="sm"
+                                        />
+                                      </InputGroup>
+                                    </div>
                                   )}
                                 </div>
                               )}
                             </div>
                           );
                         })}
-
-                        {participantError && (
-                          <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                            {participantError}
-                          </p>
-                        )}
                       </div>
                     </div>
                   </Tabs.Panel>

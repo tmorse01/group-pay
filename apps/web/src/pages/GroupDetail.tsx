@@ -258,7 +258,7 @@ export function GroupDetail() {
                 onClick={() => setActiveTab(tab)}
                 className={
                   activeTab === tab
-                    ? 'py-4 px-1 border-b-2 border-green-500 text-green-600 dark:text-green-400 font-medium text-sm transition-colors'
+                    ? 'py-4 px-1 border-b-2 border-brand-500 text-brand-600 dark:text-brand-400 font-medium text-sm transition-colors'
                     : 'py-4 px-1 border-b-2 border-transparent text-neutral-500 hover:text-neutral-700 hover:border-neutral-300 dark:text-neutral-400 dark:hover:text-neutral-300 font-medium text-sm transition-colors'
                 }
               >

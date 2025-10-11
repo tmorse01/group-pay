@@ -7,6 +7,7 @@ export { UiField } from './core/Field';
 export { InputField } from './fields/InputField';
 export { SelectField } from './fields/SelectField';
 export { TextareaField } from './fields/TextareaField';
+export { CurrencyInputField } from './fields/CurrencyInputField';
 
 // Validation
 export * from './validation/validators';
@@ -18,3 +19,4 @@ export type { UiFieldProps } from './core/Field';
 export type { InputFieldProps } from './fields/InputField';
 export type { SelectFieldProps } from './fields/SelectField';
 export type { TextareaFieldProps } from './fields/TextareaField';
+export type { CurrencyInputFieldProps } from './fields/CurrencyInputField';
