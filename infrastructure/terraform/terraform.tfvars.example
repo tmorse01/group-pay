@@ -1,0 +1,32 @@
+# Example Terraform variables file
+# Copy this file to terraform.tfvars and customize as needed
+
+# Application Configuration
+app_name    = "grouppay"
+environment = "production"
+location    = "West US"
+
+# Resource Group
+resource_group_name = "grouppay-rg"
+
+# App Service Configuration
+app_service_sku = "B1"  # Basic tier (~$13/month)
+
+# Database Configuration
+db_admin_username = "grouppay_admin"
+db_name          = "grouppay"
+db_sku_name      = "B_Standard_B1ms"  # Burstable tier (~$12/month)
+db_storage_mb    = 32768               # 32GB
+
+# Optional Features (enable when needed)
+create_key_vault        = false  # Enable for production secrets management (+$1/month)
+create_storage_account  = false  # Enable for file uploads (+$2-5/month)
+create_app_insights     = false  # Enable for monitoring (+$2-5/month)
+
+# Tags
+tags = {
+  Application = "GroupPay"
+  Environment = "Production"
+  ManagedBy   = "Terraform"
+  Owner       = "YourName"
+}

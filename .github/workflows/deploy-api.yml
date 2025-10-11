@@ -1,0 +1,93 @@
+name: Deploy API to Azure App Service
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'apps/api/**'
+      - 'packages/shared/**'
+      - '.github/workflows/deploy-api.yml'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🛎️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: 📦 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🏗️ Build shared packages
+        run: pnpm -F @group-pay/shared build
+
+      - name: 🏗️ Build API
+        run: pnpm -F @group-pay/api build
+
+      - name: 🧪 Run API tests
+        run: pnpm -F @group-pay/api test
+
+      - name: 🏗️ Prepare deployment package
+        run: |
+          # Create deployment directory
+          mkdir -p deployment
+
+          # Copy API build output
+          cp -r apps/api/dist deployment/
+          cp -r apps/api/node_modules deployment/
+          cp apps/api/package.json deployment/
+          cp apps/api/prisma deployment/ -r
+
+          # Copy shared package if needed
+          mkdir -p deployment/node_modules/@group-pay
+          cp -r packages/shared deployment/node_modules/@group-pay/
+
+          # Create startup script
+          cat > deployment/startup.sh << 'EOF'
+          #!/bin/bash
+          cd /home/site/wwwroot
+
+          # Run database migrations
+          npx prisma migrate deploy
+
+          # Generate Prisma client
+          npx prisma generate
+
+          # Start the application
+          node dist/index.js
+          EOF
+          chmod +x deployment/startup.sh
+
+      - name: 📦 Create deployment zip
+        run: |
+          cd deployment
+          zip -r ../api-deployment.zip .
+
+      - name: 🚀 Deploy to Azure App Service
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ secrets.AZURE_APP_SERVICE_NAME }}
+          publish-profile: ${{ secrets.AZURE_APP_SERVICE_PUBLISH_PROFILE }}
+          package: api-deployment.zip
+
+      - name: 🏃‍♂️ Run database migrations
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.30.0
+          inlineScript: |
+            # Run migrations via App Service SSH
+            az webapp ssh --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AZURE_APP_SERVICE_NAME }} --command "cd /home/site/wwwroot && npx prisma migrate deploy"

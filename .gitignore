@@ -10,6 +10,7 @@ build/
 
 # Environment variables
 .env
+.env.*
 .env.local
 .env.development.local
 .env.test.local
@@ -169,3 +170,11 @@ local.json
 # Runtime files
 *.pid
 *.lock
+
+# Infrastructure secrets and state
+infrastructure/.env
+infrastructure/**/*.tfstate
+infrastructure/**/*.tfstate.backup
+infrastructure/**/.terraform/
+infrastructure/**/terraform.tfvars
+infrastructure/**/outputs.json
