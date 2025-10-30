@@ -1,8 +1,19 @@
 import { Link } from 'react-router-dom';
 import { Button } from '../components/base/buttons/button';
-import { CheckCircle } from '@untitledui/icons';
+import { CheckCircle, XClose } from '@untitledui/icons';
 
-const pricingTiers = [
+type PricingTier = {
+  name: string;
+  price: string;
+  period: string;
+  description: string;
+  features: string[];
+  cta: string;
+  highlighted: boolean;
+  color: 'primary' | 'secondary';
+};
+
+const pricingTiers: PricingTier[] = [
   {
     name: 'Free',
     price: '$0',
@@ -165,7 +176,7 @@ export function Pricing() {
                 <div className="mt-8">
                   <Link to="/login">
                     <Button
-                      color={tier.color as 'primary' | 'secondary'}
+                      color={tier.color}
                       size="lg"
                       className={`w-full ${
                         tier.highlighted
@@ -261,13 +272,13 @@ export function Pricing() {
                     Receipt upload
                   </td>
                   <td className="py-4 px-6 text-center text-sm text-neutral-900 dark:text-neutral-50">
-                    -
+                    <XClose className="h-5 w-5 text-neutral-400 dark:text-neutral-600 mx-auto" aria-label="Not available" />
                   </td>
                   <td className="py-4 px-6 text-center text-sm text-neutral-900 dark:text-neutral-50 bg-brand-50 dark:bg-brand-900/20">
-                    <CheckCircle className="h-5 w-5 text-brand-600 dark:text-brand-400 mx-auto" />
+                    <CheckCircle className="h-5 w-5 text-brand-600 dark:text-brand-400 mx-auto" aria-label="Available" />
                   </td>
                   <td className="py-4 px-6 text-center text-sm text-neutral-900 dark:text-neutral-50">
-                    <CheckCircle className="h-5 w-5 text-brand-600 dark:text-brand-400 mx-auto" />
+                    <CheckCircle className="h-5 w-5 text-brand-600 dark:text-brand-400 mx-auto" aria-label="Available" />
                   </td>
                 </tr>
                 <tr>
@@ -275,13 +286,13 @@ export function Pricing() {
                     Export data
                   </td>
                   <td className="py-4 px-6 text-center text-sm text-neutral-900 dark:text-neutral-50">
-                    -
+                    <XClose className="h-5 w-5 text-neutral-400 dark:text-neutral-600 mx-auto" aria-label="Not available" />
                   </td>
                   <td className="py-4 px-6 text-center text-sm text-neutral-900 dark:text-neutral-50 bg-brand-50 dark:bg-brand-900/20">
-                    <CheckCircle className="h-5 w-5 text-brand-600 dark:text-brand-400 mx-auto" />
+                    <CheckCircle className="h-5 w-5 text-brand-600 dark:text-brand-400 mx-auto" aria-label="Available" />
                   </td>
                   <td className="py-4 px-6 text-center text-sm text-neutral-900 dark:text-neutral-50">
-                    <CheckCircle className="h-5 w-5 text-brand-600 dark:text-brand-400 mx-auto" />
+                    <CheckCircle className="h-5 w-5 text-brand-600 dark:text-brand-400 mx-auto" aria-label="Available" />
                   </td>
                 </tr>
                 <tr>
@@ -289,13 +300,13 @@ export function Pricing() {
                     Payment integration
                   </td>
                   <td className="py-4 px-6 text-center text-sm text-neutral-900 dark:text-neutral-50">
-                    -
+                    <XClose className="h-5 w-5 text-neutral-400 dark:text-neutral-600 mx-auto" aria-label="Not available" />
                   </td>
                   <td className="py-4 px-6 text-center text-sm text-neutral-900 dark:text-neutral-50 bg-brand-50 dark:bg-brand-900/20">
-                    -
+                    <XClose className="h-5 w-5 text-neutral-400 dark:text-neutral-600 mx-auto" aria-label="Not available" />
                   </td>
                   <td className="py-4 px-6 text-center text-sm text-neutral-900 dark:text-neutral-50">
-                    <CheckCircle className="h-5 w-5 text-brand-600 dark:text-brand-400 mx-auto" />
+                    <CheckCircle className="h-5 w-5 text-brand-600 dark:text-brand-400 mx-auto" aria-label="Available" />
                   </td>
                 </tr>
                 <tr>
@@ -303,13 +314,13 @@ export function Pricing() {
                     Multi-currency
                   </td>
                   <td className="py-4 px-6 text-center text-sm text-neutral-900 dark:text-neutral-50">
-                    -
+                    <XClose className="h-5 w-5 text-neutral-400 dark:text-neutral-600 mx-auto" aria-label="Not available" />
                   </td>
                   <td className="py-4 px-6 text-center text-sm text-neutral-900 dark:text-neutral-50 bg-brand-50 dark:bg-brand-900/20">
-                    -
+                    <XClose className="h-5 w-5 text-neutral-400 dark:text-neutral-600 mx-auto" aria-label="Not available" />
                   </td>
                   <td className="py-4 px-6 text-center text-sm text-neutral-900 dark:text-neutral-50">
-                    <CheckCircle className="h-5 w-5 text-brand-600 dark:text-brand-400 mx-auto" />
+                    <CheckCircle className="h-5 w-5 text-brand-600 dark:text-brand-400 mx-auto" aria-label="Available" />
                   </td>
                 </tr>
                 <tr>
