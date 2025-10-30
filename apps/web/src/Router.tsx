@@ -8,6 +8,7 @@ import { Expenses } from './pages/Expenses';
 import { Settings } from './pages/Settings';
 import { Login } from './pages/Login';
 import { Landing } from './pages/Landing';
+import { Pricing } from './pages/Pricing';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -40,6 +41,7 @@ export function Router() {
         path="/login"
         element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />}
       />
+      <Route path="/pricing" element={<Pricing />} />
       <Route
         path="/dashboard"
         element={
