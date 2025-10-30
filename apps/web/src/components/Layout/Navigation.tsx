@@ -8,7 +8,7 @@ import {
 } from '@untitledui/icons';
 
 const navigationItems = [
-  { label: 'Dashboard', to: '/', icon: BarChart03 },
+  { label: 'Dashboard', to: '/dashboard', icon: BarChart03 },
   { label: 'Groups', to: '/groups', icon: Users01 },
   { label: 'Expenses', to: '/expenses', icon: CurrencyDollar },
   { label: 'Settings', to: '/settings', icon: Settings01 },
