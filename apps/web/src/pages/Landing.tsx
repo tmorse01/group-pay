@@ -24,7 +24,7 @@ export function Landing() {
               fairly, and settle up with friends, roommates, and travel
               companions.
             </p>
-            <div className="mt-10 flex items-center justify-center gap-x-6">
+            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-x-6">
               <Link to="/login">
                 <Button color="primary" size="lg">
                   Get Started
@@ -33,6 +33,11 @@ export function Landing() {
               <Link to="/pricing">
                 <Button color="secondary" size="lg">
                   View Pricing
+                </Button>
+              </Link>
+              <Link to="/login">
+                <Button color="secondary" size="lg">
+                  Sign In
                 </Button>
               </Link>
             </div>
