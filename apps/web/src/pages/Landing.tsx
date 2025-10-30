@@ -30,9 +30,9 @@ export function Landing() {
                   Get Started
                 </Button>
               </Link>
-              <Link to="/login">
+              <Link to="/pricing">
                 <Button color="secondary" size="lg">
-                  Sign In
+                  View Pricing
                 </Button>
               </Link>
             </div>
