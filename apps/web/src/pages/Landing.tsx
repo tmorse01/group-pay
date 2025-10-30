@@ -1,5 +1,13 @@
 import { Link } from 'react-router-dom';
 import { Button } from '../components/base/buttons/button';
+import {
+  Users01,
+  CurrencyDollar,
+  BarChart03,
+  CheckCircle,
+  Moon01,
+  Phone01,
+} from '@untitledui/icons';
 
 export function Landing() {
   return (
@@ -48,19 +56,7 @@ export function Landing() {
               {/* Feature 1 */}
               <div className="flex flex-col items-start">
                 <div className="rounded-lg bg-brand-600 p-2 ring-1 ring-brand-600">
-                  <svg
-                    className="h-6 w-6 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"
-                    />
-                  </svg>
+                  <Users01 className="h-6 w-6 text-white" />
                 </div>
                 <h3 className="mt-6 text-lg font-semibold text-neutral-900 dark:text-neutral-50">
                   Group Management
@@ -74,19 +70,7 @@ export function Landing() {
               {/* Feature 2 */}
               <div className="flex flex-col items-start">
                 <div className="rounded-lg bg-brand-600 p-2 ring-1 ring-brand-600">
-                  <svg
-                    className="h-6 w-6 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
+                  <CurrencyDollar className="h-6 w-6 text-white" />
                 </div>
                 <h3 className="mt-6 text-lg font-semibold text-neutral-900 dark:text-neutral-50">
                   Flexible Splitting
@@ -100,19 +84,7 @@ export function Landing() {
               {/* Feature 3 */}
               <div className="flex flex-col items-start">
                 <div className="rounded-lg bg-brand-600 p-2 ring-1 ring-brand-600">
-                  <svg
-                    className="h-6 w-6 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"
-                    />
-                  </svg>
+                  <BarChart03 className="h-6 w-6 text-white" />
                 </div>
                 <h3 className="mt-6 text-lg font-semibold text-neutral-900 dark:text-neutral-50">
                   Real-Time Balances
@@ -126,19 +98,7 @@ export function Landing() {
               {/* Feature 4 */}
               <div className="flex flex-col items-start">
                 <div className="rounded-lg bg-brand-600 p-2 ring-1 ring-brand-600">
-                  <svg
-                    className="h-6 w-6 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
+                  <CheckCircle className="h-6 w-6 text-white" />
                 </div>
                 <h3 className="mt-6 text-lg font-semibold text-neutral-900 dark:text-neutral-50">
                   Settlement Tracking
@@ -152,19 +112,7 @@ export function Landing() {
               {/* Feature 5 */}
               <div className="flex flex-col items-start">
                 <div className="rounded-lg bg-brand-600 p-2 ring-1 ring-brand-600">
-                  <svg
-                    className="h-6 w-6 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"
-                    />
-                  </svg>
+                  <Moon01 className="h-6 w-6 text-white" />
                 </div>
                 <h3 className="mt-6 text-lg font-semibold text-neutral-900 dark:text-neutral-50">
                   Dark Mode
@@ -178,19 +126,7 @@ export function Landing() {
               {/* Feature 6 */}
               <div className="flex flex-col items-start">
                 <div className="rounded-lg bg-brand-600 p-2 ring-1 ring-brand-600">
-                  <svg
-                    className="h-6 w-6 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M10.5 1.5H8.25A2.25 2.25 0 006 3.75v16.5a2.25 2.25 0 002.25 2.25h7.5A2.25 2.25 0 0018 20.25V3.75a2.25 2.25 0 00-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"
-                    />
-                  </svg>
+                  <Phone01 className="h-6 w-6 text-white" />
                 </div>
                 <h3 className="mt-6 text-lg font-semibold text-neutral-900 dark:text-neutral-50">
                   Mobile Friendly
