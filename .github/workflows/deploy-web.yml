@@ -55,7 +55,7 @@ jobs:
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
-      - name: � Debug - List dist contents
+      - name: 🔍 Debug - List dist contents
         run: |
           echo "=== Checking dist directory ==="
           ls -la apps/web/dist/
@@ -63,8 +63,8 @@ jobs:
           echo "=== Listing assets ==="
           ls -la apps/web/dist/assets/ || echo "No assets directory"
           echo ""
-          echo "=== Checking index.html ==="
-          head -30 apps/web/dist/index.html
+          echo "=== Checking full index.html ==="
+          cat apps/web/dist/index.html
           echo ""
           echo "=== Checking staticwebapp.config.json ==="
           cat apps/web/dist/staticwebapp.config.json
