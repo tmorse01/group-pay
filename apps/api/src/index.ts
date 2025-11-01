@@ -10,7 +10,7 @@ async function start() {
 
     // Test database connection
     await prisma.$connect();
-    app.log.info('✅ Database connected successfully');
+    app.log.info('[DATABASE] Connected successfully');
 
     // Start the server
     await app.listen({
@@ -18,9 +18,11 @@ async function start() {
       host: '0.0.0.0',
     });
 
-    app.log.info(`🚀 Group Pay API server is running on port ${env.PORT}`);
-    app.log.info(`📚 API Documentation: http://localhost:${env.PORT}/docs`);
-    app.log.info(`🏥 Health Check: http://localhost:${env.PORT}/health`);
+    app.log.info(
+      `[SERVER] Group Pay API server is running on port ${env.PORT}`
+    );
+    app.log.info(`[DOCS] API Documentation: http://localhost:${env.PORT}/docs`);
+    app.log.info(`[HEALTH] Health Check: http://localhost:${env.PORT}/health`);
 
     // Handle graceful shutdown
     const shutdown = async () => {
@@ -33,7 +35,7 @@ async function start() {
     process.on('SIGTERM', shutdown);
     process.on('SIGINT', shutdown);
   } catch (error) {
-    console.error('❌ Error starting server:', error);
+    console.error('[ERROR] Error starting server:', error);
     await prisma.$disconnect();
     process.exit(1);
   }
