@@ -16,11 +16,14 @@
     }
   },
   "globalHeaders": {
-    "content-security-policy": "default-src https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'"
+    "content-security-policy": "default-src https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'",
+    "cache-control": "public, max-age=3600"
   },
   "mimeTypes": {
-    ".json": "text/json",
-    ".js": "application/javascript",
-    ".mjs": "application/javascript"
+    ".json": "application/json",
+    ".js": "application/javascript; charset=utf-8",
+    ".mjs": "application/javascript; charset=utf-8",
+    ".ts": "application/typescript",
+    ".tsx": "application/typescript"
   }
 }
