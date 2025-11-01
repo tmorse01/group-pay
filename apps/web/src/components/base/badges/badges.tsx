@@ -1,6 +1,6 @@
 import type { MouseEventHandler, ReactNode } from 'react';
 import { X as CloseX } from '@untitledui/icons';
-import { Dot } from '../../foundations/dot-icon';
+import { Dot } from '@/components/foundations/dot-icon';
 import { cx } from '@/utils/cx';
 import type {
   BadgeColors,
@@ -9,8 +9,8 @@ import type {
   FlagTypes,
   IconComponentType,
   Sizes,
-} from './badge-types';
-import { badgeTypes } from './badge-types';
+} from '@/components/base/badges/badge-types';
+import { badgeTypes } from '@/components/base/badges/badge-types';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const filledColors: Record<

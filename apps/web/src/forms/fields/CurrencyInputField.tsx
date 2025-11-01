@@ -1,6 +1,6 @@
 import { InputGroup } from '@/components/base/input/input-group';
 import { InputBase } from '@/components/base/input/input';
-import { UiField } from '../core/Field';
+import { UiField } from '@/forms/core/Field';
 
 export type CurrencyInputFieldProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,13 +1,13 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth } from './hooks/useAuth';
-import { AppShell } from './components/Layout/AppShell';
-import { Dashboard } from './pages/Dashboard';
-import { Groups } from './pages/Groups';
-import { GroupDetail } from './pages/GroupDetail';
-import { Expenses } from './pages/Expenses';
-import { Settings } from './pages/Settings';
-import { Login } from './pages/Login';
-import { Landing } from './pages/Landing';
+import { useAuth } from '@/hooks/useAuth';
+import { AppShell } from '@/components/Layout/AppShell';
+import { Dashboard } from '@/pages/Dashboard';
+import { Groups } from '@/pages/Groups';
+import { GroupDetail } from '@/pages/GroupDetail';
+import { Expenses } from '@/pages/Expenses';
+import { Settings } from '@/pages/Settings';
+import { Login } from '@/pages/Login';
+import { Landing } from '@/pages/Landing';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -34,11 +34,15 @@ export function Router() {
     <Routes>
       <Route
         path="/"
-        element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Landing />}
+        element={
+          isAuthenticated ? <Navigate to="/dashboard" replace /> : <Landing />
+        }
       />
       <Route
         path="/login"
-        element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />}
+        element={
+          isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />
+        }
       />
       <Route
         path="/dashboard"

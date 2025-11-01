@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Select } from '@/components/base/select/select';
-import { UiField } from '../core/Field';
+import { UiField } from '@/forms/core/Field';
 
 export type SelectFieldProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

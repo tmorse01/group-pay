@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Button } from '../../base/buttons/button';
+import { Button } from '@/components/base/buttons/button';
 import { Modal, ModalOverlay, Dialog } from './modal';
-import { useCreateGroup } from '../../../services/groups';
-import { cx } from '../../../utils/cx';
+import { useCreateGroup } from '@/services/groups';
+import { cx } from '@/utils/cx';
 
 interface CreateGroupModalProps {
   isOpen: boolean;

@@ -13,8 +13,8 @@ import {
   TabsContext,
   useSlottedContext,
 } from 'react-aria-components';
-import type { BadgeColors } from '../../base/badges/badge-types';
-import { Badge } from '../../base/badges/badges';
+import type { BadgeColors } from '@/components/base/badges/badge-types';
+import { Badge } from '@/components/base/badges/badges';
 import { cx } from '@/utils/cx';
 
 type Orientation = 'horizontal' | 'vertical';

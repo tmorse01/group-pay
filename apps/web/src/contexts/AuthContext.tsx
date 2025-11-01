@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 import type { ReactNode } from 'react';
-import { useMe, useLogin, useLogout } from '../services/auth';
+import { useMe, useLogin, useLogout } from '@/services/auth';
 
 interface User {
   id: string;

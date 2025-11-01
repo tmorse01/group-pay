@@ -1,7 +1,7 @@
-import { Button } from '../../base/buttons/button';
+import { Button } from '@/components/base/buttons/button';
 import { Modal, ModalOverlay, Dialog } from './modal';
-import { useAddMember } from '../../../services/groups';
-import { useAppForm, UiForm, InputField } from '../../../forms';
+import { useAddMember } from '@/services/groups';
+import { useAppForm, UiForm, InputField } from '@/forms';
 
 type AddMemberFormValues = {
   email: string;

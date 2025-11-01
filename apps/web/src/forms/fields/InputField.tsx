@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Input } from '@/components/base/input/input';
-import { UiField } from '../core/Field';
+import { UiField } from '@/forms/core/Field';
 
 export type InputFieldProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

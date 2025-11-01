@@ -8,14 +8,14 @@ import {
   Select as AriaSelect,
   SelectValue as AriaSelectValue,
 } from 'react-aria-components';
-import { Avatar } from '../avatar/avatar';
-import { HintText } from '../input/hint-text';
-import { Label } from '../input/label';
+import { Avatar } from '@/components/base/avatar/avatar';
+import { HintText } from '@/components/base/input/hint-text';
+import { Label } from '@/components/base/input/label';
 import { cx } from '@/utils/cx';
 import { isReactComponent } from '@/utils/is-react-component';
-import { ComboBox } from './combobox';
-import { Popover } from './popover';
-import { SelectItem } from './select-item';
+import { ComboBox } from '@/components/base/select/combobox';
+import { Popover } from '@/components/base/select/popover';
+import { SelectItem } from '@/components/base/select/select-item';
 
 export type SelectItemType = {
   id: string;

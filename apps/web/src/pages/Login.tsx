@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { useAuth } from '../hooks/useAuth';
-import { Button } from '../components/base/buttons/button';
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/base/buttons/button';
 
 export function Login() {
   const [email, setEmail] = useState('');

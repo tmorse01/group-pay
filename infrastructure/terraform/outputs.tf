@@ -3,14 +3,9 @@ output "resource_group_name" {
   value       = azurerm_resource_group.main.name
 }
 
-output "app_service_name" {
-  description = "Name of the App Service (API)"
-  value       = azurerm_linux_web_app.api.name
-}
-
-output "app_service_url" {
-  description = "URL of the App Service (API)"
-  value       = "https://${azurerm_linux_web_app.api.default_hostname}"
+output "api_deployment_info" {
+  description = "API will be deployed via Static Web App backend configuration or GitHub Actions"
+  value       = "Deploy API using: 'npm run deploy' or GitHub Actions workflow"
 }
 
 output "static_web_app_name" {

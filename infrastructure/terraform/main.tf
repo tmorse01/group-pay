@@ -40,16 +40,8 @@ resource "azurerm_resource_group" "main" {
   tags = var.tags
 }
 
-# Create App Service Plan
-resource "azurerm_service_plan" "main" {
-  name                = "${var.app_name}-plan"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
-  os_type             = "Linux"
-  sku_name            = var.app_service_sku
-
-  tags = var.tags
-}
+# Note: App Service Plan removed due to quota restrictions
+# Using Azure Container Instances instead for better cost and availability
 
 # Create PostgreSQL Flexible Server
 resource "azurerm_postgresql_flexible_server" "main" {
@@ -97,40 +89,8 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_all" {
   end_ip_address   = "255.255.255.255"
 }
 
-# Create Linux Web App (API)
-resource "azurerm_linux_web_app" "api" {
-  name                = "${var.app_name}-api"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_service_plan.main.location
-  service_plan_id     = azurerm_service_plan.main.id
-
-  site_config {
-    application_stack {
-      node_version = "18-lts"
-    }
-    
-    always_on = false # F1 tier doesn't support always_on
-    
-    cors {
-      allowed_origins = [
-        "https://${azurerm_static_web_app.main.default_host_name}",
-        var.environment == "development" ? "http://localhost:5173" : ""
-      ]
-      support_credentials = true
-    }
-  }
-
-  app_settings = {
-    "DATABASE_URL"                = "postgresql://${var.db_admin_username}:${random_password.db_password.result}@${azurerm_postgresql_flexible_server.main.fqdn}:5432/${var.db_name}?sslmode=require"
-    "JWT_SECRET"                  = random_password.jwt_secret.result
-    "NODE_ENV"                    = var.environment == "development" ? "development" : "production"
-    "PORT"                        = "8080"
-    "WEBSITE_NODE_DEFAULT_VERSION" = "~18"
-    "SCM_DO_BUILD_DURING_DEPLOYMENT" = "true"
-  }
-
-  tags = var.tags
-}
+# Note: Container Instance removed - will deploy API via direct build and deployment
+# The Node.js API will be built and deployed directly to the web app using GitHub Actions
 
 # Random JWT secret
 resource "random_password" "jwt_secret" {

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
-import { Button } from '../base/buttons/button';
-import { formatRelativeDate, pluralize } from '../../utils';
-import { cx } from '../../utils/cx';
+import { Button } from '@/components/base/buttons/button';
+import { formatRelativeDate, pluralize } from '@/utils';
+import { cx } from '@/utils/cx';
 
 interface Group {
   id: string;

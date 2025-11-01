@@ -1,16 +1,16 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '../components/base/buttons/button';
-import { useExpenses } from '../services/expenses';
-import { LoadingSpinner } from '../components/application/LoadingSpinner';
-import { ErrorState } from '../components/application/ErrorState';
+import { Button } from '@/components/base/buttons/button';
+import { useExpenses } from '@/services/expenses';
+import { LoadingSpinner } from '@/components/application/LoadingSpinner';
+import { ErrorState } from '@/components/application/ErrorState';
 import {
   formatCurrency,
   formatDate,
   formatRelativeDate,
   pluralize,
   formatInitials,
-} from '../utils';
+} from '@/utils';
 
 export function Expenses() {
   const [searchQuery, setSearchQuery] = useState('');

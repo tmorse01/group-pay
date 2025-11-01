@@ -1,5 +1,5 @@
-import { Button } from './base/buttons/button';
-import { useTheme } from '../hooks/useTheme';
+import { Button } from '@/components/base/buttons/button';
+import { useTheme } from '@/hooks/useTheme';
 import { Sun, Moon01, Monitor01 } from '@untitledui/icons';
 
 export function ThemeToggle() {

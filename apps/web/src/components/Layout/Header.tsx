@@ -1,6 +1,6 @@
-import { useAuth } from '../../hooks/useAuth';
-import { Button } from '../base/buttons/button';
-import { ThemeToggle } from '../ThemeToggle';
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/base/buttons/button';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export function Header() {
   const { user, logout } = useAuth();

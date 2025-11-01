@@ -1,5 +1,5 @@
 import { TextArea } from '@/components/base/textarea/textarea';
-import { UiField } from '../core/Field';
+import { UiField } from '@/forms/core/Field';
 
 export type TextareaFieldProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

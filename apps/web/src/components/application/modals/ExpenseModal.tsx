@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
 import { X, AlertTriangle } from '@untitledui/icons';
-import { Button } from '../../base/buttons/button';
+import { Button } from '@/components/base/buttons/button';
 import { Modal, ModalOverlay, Dialog } from './modal';
-import { Tabs } from '../tabs/tabs';
-import { useCreateExpense, useUpdateExpense } from '../../../services/expenses';
+import { Tabs } from '@/components/application/tabs/tabs';
+import { useCreateExpense, useUpdateExpense } from '@/services/expenses';
 import {
   useAppForm,
   UiForm,
@@ -11,11 +11,11 @@ import {
   SelectField,
   TextareaField,
   CurrencyInputField,
-} from '../../../forms';
+} from '@/forms';
 import { Select } from '@/components/base/select/select';
 import { InputGroup } from '@/components/base/input/input-group';
 import { InputBase } from '@/components/base/input/input';
-import { formatCurrency } from '../../../utils/currency';
+import { formatCurrency } from '@/utils/currency';
 import type { ExpenseSplitType, UpdateExpenseDto } from '@group-pay/shared';
 
 interface BaseExpenseModalProps {

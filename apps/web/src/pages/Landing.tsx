@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Button } from '../components/base/buttons/button';
+import { Button } from '@/components/base/buttons/button';
 import {
   Users01,
   CurrencyDollar,

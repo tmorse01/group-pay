@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '../components/base/buttons/button';
-import { useGroups, useCreateGroup } from '../services/groups';
-import { LoadingSpinner } from '../components/application/LoadingSpinner';
-import { ErrorState } from '../components/application/ErrorState';
-import { formatRelativeDate, pluralize } from '../utils';
+import { Button } from '@/components/base/buttons/button';
+import { useGroups, useCreateGroup } from '@/services/groups';
+import { LoadingSpinner } from '@/components/application/LoadingSpinner';
+import { ErrorState } from '@/components/application/ErrorState';
+import { formatRelativeDate, pluralize } from '@/utils';
 
 export function Groups() {
   const [searchQuery, setSearchQuery] = useState('');

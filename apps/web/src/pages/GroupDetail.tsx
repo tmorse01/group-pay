@@ -1,17 +1,17 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { Button } from '../components/base/buttons/button';
-import { useGroup, useUpdateGroup, useDeleteGroup } from '../services/groups';
-import { LoadingSpinner } from '../components/application/LoadingSpinner';
-import { ErrorState } from '../components/application/ErrorState';
+import { Button } from '@/components/base/buttons/button';
+import { useGroup, useUpdateGroup, useDeleteGroup } from '@/services/groups';
+import { LoadingSpinner } from '@/components/application/LoadingSpinner';
+import { ErrorState } from '@/components/application/ErrorState';
 import {
   AddExpenseModal,
   EditExpenseModal,
-} from '../components/application/modals/ExpenseModal';
-import { AddMemberModal } from '../components/application/modals/AddMemberModal';
-import { DeleteExpenseModal } from '../components/application/modals/DeleteExpenseModal';
-import { formatCurrency } from '../utils/currency';
-import { formatRelativeDate, formatDate } from '../utils';
+} from '@/components/application/modals/ExpenseModal';
+import { AddMemberModal } from '@/components/application/modals/AddMemberModal';
+import { DeleteExpenseModal } from '@/components/application/modals/DeleteExpenseModal';
+import { formatCurrency } from '@/utils/currency';
+import { formatRelativeDate, formatDate } from '@/utils';
 
 export function GroupDetail() {
   const { id } = useParams<{ id: string }>();

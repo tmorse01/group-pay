@@ -1,7 +1,7 @@
-import { Button } from '../../base/buttons/button';
+import { Button } from '@/components/base/buttons/button';
 import { Modal, ModalOverlay, Dialog } from './modal';
-import { useDeleteExpense } from '../../../services/expenses';
-import { formatCurrency } from '../../../utils/currency';
+import { useDeleteExpense } from '@/services/expenses';
+import { formatCurrency } from '@/utils/currency';
 
 interface DeleteExpenseModalProps {
   isOpen: boolean;

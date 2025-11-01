@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { Navigation } from './Navigation';
-import { Header } from './Header';
+import { Navigation } from '@/components/Layout/Navigation';
+import { Header } from '@/components/Layout/Header';
 
 interface AppShellProps {
   children: ReactNode;

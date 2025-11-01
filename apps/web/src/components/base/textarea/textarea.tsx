@@ -8,8 +8,8 @@ import {
   TextArea as AriaTextArea,
   TextField as AriaTextField,
 } from 'react-aria-components';
-import { HintText } from '../input/hint-text';
-import { Label } from '../input/label';
+import { HintText } from '@/components/base/input/hint-text';
+import { Label } from '@/components/base/input/label';
 import { cx } from '@/utils/cx';
 
 // Creates a data URL for an SVG resize handle with a given color.
