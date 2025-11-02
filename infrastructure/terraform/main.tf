@@ -40,8 +40,40 @@ resource "azurerm_resource_group" "main" {
   tags = var.tags
 }
 
-# Note: App Service Plan removed due to quota restrictions
-# Using Azure Container Instances instead for better cost and availability
+# Create App Service Plan
+resource "azurerm_service_plan" "main" {
+  name                = "${var.app_name}-plan"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+  os_type             = "Linux"
+  sku_name            = var.app_service_sku
+
+  tags = var.tags
+}
+
+# Create App Service for API
+resource "azurerm_linux_web_app" "api" {
+  name                = "${var.app_name}-api"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = azurerm_resource_group.main.location
+  service_plan_id     = azurerm_service_plan.main.id
+
+  site_config {
+    always_on = false
+    
+    application_stack {
+      node_version = "20-lts"
+    }
+  }
+
+  app_settings = {
+    DATABASE_URL = "postgresql://${var.db_admin_username}:${random_password.db_password.result}@${azurerm_postgresql_flexible_server.main.fqdn}:5432/${var.db_name}"
+    JWT_SECRET   = random_password.jwt_secret.result
+    NODE_ENV     = var.environment
+  }
+
+  tags = var.tags
+}
 
 # Create PostgreSQL Flexible Server
 resource "azurerm_postgresql_flexible_server" "main" {
@@ -88,9 +120,6 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_all" {
   start_ip_address = "0.0.0.0"
   end_ip_address   = "255.255.255.255"
 }
-
-# Note: Container Instance removed - will deploy API via direct build and deployment
-# The Node.js API will be built and deployed directly to the web app using GitHub Actions
 
 # Random JWT secret
 resource "random_password" "jwt_secret" {
