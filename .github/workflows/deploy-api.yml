@@ -57,76 +57,63 @@ jobs:
         run: pnpm -F @group-pay/api test
         continue-on-error: true
 
-      - name: 📦 Prepare deployment package
+      - name: 📦 Prepare deployment package using pnpm deploy
         run: |
-          # Create clean deployment directory
-          mkdir -p deployment
+          # Use pnpm deploy to create a production-ready deployment
+          # This resolves workspace dependencies and creates a clean copy
+          pnpm --filter @group-pay/api --prod deploy deployment
 
-          # Copy built code and configs
-          cp -r apps/api/dist deployment/
+          # Copy the built dist folder into the deployment
+          cp -r apps/api/dist/* deployment/
+
+          # Copy prisma folder for migrations
           cp -r apps/api/prisma deployment/
-          cp apps/api/package.json deployment/
 
-          # Copy the built shared package
-          mkdir -p deployment/node_modules/@group-pay
-          cp -r packages/shared deployment/node_modules/@group-pay/shared
-
-          # Install production dependencies using npm (not pnpm) to get real packages
-          cd deployment
-          # Remove workspace reference
-          npm pkg delete dependencies.@group-pay/shared
-          npm pkg delete devDependencies.@group-pay/config
-          # Install actual packages
-          npm install --omit=dev --legacy-peer-deps
-          cd ..
-
-      - name: 🔍 Debug - Verify shared package
+      - name: 🔍 Debug - Verify deployment structure
         run: |
-          echo "=== Shared package structure ==="
-          ls -lah deployment/node_modules/@group-pay/shared/
-          echo ""
-          echo "=== Shared package.json ==="
-          cat deployment/node_modules/@group-pay/shared/package.json
-          echo ""
-          echo "=== Does shared have dist? ==="
-          if [ -d deployment/node_modules/@group-pay/shared/dist ]; then
-            echo "✓ dist directory exists"
-            ls -lah deployment/node_modules/@group-pay/shared/dist/
-          else
-            echo "✗ dist directory NOT found"
-          fi
-          echo ""
-          echo "=== Built API routes checking imports ==="
-          echo "Checking dist/routes/expenses.js for imports:"
-          head -20 deployment/dist/routes/expenses.js
-          echo ""
-          echo "=== Checking if dist/schemas exists ==="
-          if [ -d deployment/dist/schemas ]; then
-            echo "✓ schemas directory exists"
-            ls -lah deployment/dist/schemas/
-          else
-            echo "✗ schemas directory NOT found - THIS IS THE ISSUE!"
-            echo "Looking for schemas in source:"
-            find apps/api/src -name "*expense*" -type f
-          fi
-
-      - name: 🔍 Debug - Check deployment structure
-        run: |
-          echo "=== Deployment directory contents ==="
+          echo "=== Deployment root structure ==="
           ls -lah deployment/
-          echo ""
-          echo "=== Node modules check ==="
-          if [ -d deployment/node_modules ]; then
-            echo "✓ node_modules directory exists"
-            echo "Size: $(du -sh deployment/node_modules | cut -f1)"
-            echo "Contains fastify: $([ -d deployment/node_modules/fastify ] && echo 'YES' || echo 'NO')"
-            ls -lah deployment/node_modules/ | head -20
-          else
-            echo "✗ node_modules directory NOT found"
-          fi
           echo ""
           echo "=== Package.json ==="
           cat deployment/package.json
+          echo ""
+          echo "=== Node modules check ==="
+          if [ -d deployment/node_modules ]; then
+            echo "✓ node_modules exists"
+            echo "Size: $(du -sh deployment/node_modules | cut -f1)"
+            echo ""
+            echo "Top-level packages:"
+            ls deployment/node_modules/ | head -20
+            echo ""
+            echo "Checking @group-pay/shared:"
+            if [ -d deployment/node_modules/@group-pay/shared ]; then
+              echo "✓ @group-pay/shared exists"
+              ls -lah deployment/node_modules/@group-pay/shared/
+              echo ""
+              echo "Shared package.json:"
+              cat deployment/node_modules/@group-pay/shared/package.json
+            else
+              echo "✗ @group-pay/shared NOT found"
+            fi
+            echo ""
+            echo "Checking for symlinks in node_modules:"
+            ls -lah deployment/node_modules/ | grep "^l" || echo "No symlinks found (good!)"
+          else
+            echo "✗ node_modules NOT found"
+          fi
+          echo ""
+          echo "=== Checking built files ==="
+          if [ -f deployment/dist/index.js ]; then
+            echo "✓ dist/index.js exists"
+          else
+            echo "✗ dist/index.js NOT found"
+          fi
+          if [ -d deployment/dist/schemas ]; then
+            echo "✓ dist/schemas exists"
+            ls deployment/dist/schemas/
+          else
+            echo "✗ dist/schemas NOT found"
+          fi
 
       - name: 📦 Create deployment zip
         run: |
