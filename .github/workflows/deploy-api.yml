@@ -57,39 +57,26 @@ jobs:
         run: pnpm -F @group-pay/api test
         continue-on-error: true
 
-      - name: 📦 Prepare deployment package (no symlinks!)
+      - name: 📦 Prepare deployment package (tsup bundled)
         run: |
           # Create deployment directory
           mkdir -p deployment
 
-          # Copy built API code
-          cp -r apps/api/dist deployment/
+          # Copy bundled output (tsup bundles everything including @group-pay/shared)
+          cp apps/api/dist/index.js deployment/
+          cp apps/api/dist/index.js.map deployment/
           cp -r apps/api/prisma deployment/
           cp apps/api/package.json deployment/
 
-          # Pack the shared package as a tarball
-          cd packages/shared
-          npm pack
-          cd ../..
-
-          # Copy the tarball to deployment
-          cp packages/shared/*.tgz deployment/
-
-          # Install dependencies using npm (which creates real files, not symlinks)
+          # Install runtime dependencies only (no workspace deps needed - they're bundled!)
           cd deployment
 
-          # Replace workspace:* reference with the tarball
-          SHARED_TARBALL=$(ls *.tgz)
-          npm pkg set dependencies.@group-pay/shared="file:./$SHARED_TARBALL"
-
-          # Remove devDependencies entirely
+          # Remove workspace references since code is bundled
+          npm pkg delete dependencies.@group-pay/shared
           npm pkg delete devDependencies
 
-          # Install with npm (creates real files!)
+          # Install production dependencies
           npm install --omit=dev --legacy-peer-deps
-
-          # Clean up the tarball
-          rm *.tgz
 
           cd ..
 
