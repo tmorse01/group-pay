@@ -80,6 +80,36 @@ jobs:
           npm install --omit=dev --legacy-peer-deps
           cd ..
 
+      - name: 🔍 Debug - Verify shared package
+        run: |
+          echo "=== Shared package structure ==="
+          ls -lah deployment/node_modules/@group-pay/shared/
+          echo ""
+          echo "=== Shared package.json ==="
+          cat deployment/node_modules/@group-pay/shared/package.json
+          echo ""
+          echo "=== Does shared have dist? ==="
+          if [ -d deployment/node_modules/@group-pay/shared/dist ]; then
+            echo "✓ dist directory exists"
+            ls -lah deployment/node_modules/@group-pay/shared/dist/
+          else
+            echo "✗ dist directory NOT found"
+          fi
+          echo ""
+          echo "=== Built API routes checking imports ==="
+          echo "Checking dist/routes/expenses.js for imports:"
+          head -20 deployment/dist/routes/expenses.js
+          echo ""
+          echo "=== Checking if dist/schemas exists ==="
+          if [ -d deployment/dist/schemas ]; then
+            echo "✓ schemas directory exists"
+            ls -lah deployment/dist/schemas/
+          else
+            echo "✗ schemas directory NOT found - THIS IS THE ISSUE!"
+            echo "Looking for schemas in source:"
+            find apps/api/src -name "*expense*" -type f
+          fi
+
       - name: 🔍 Debug - Check deployment structure
         run: |
           echo "=== Deployment directory contents ==="
