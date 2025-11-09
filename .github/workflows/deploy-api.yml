@@ -57,9 +57,29 @@ jobs:
         run: pnpm -F @group-pay/api test
         continue-on-error: true
 
-      - name: 🚀 Deploy to Azure App Service
+      - name: � Prepare deployment package
+        run: |
+          # Create deployment directory
+          mkdir -p deployment
+
+          # Copy built code
+          cp -r apps/api/dist deployment/
+          cp apps/api/package.json deployment/
+          cp -r apps/api/prisma deployment/
+
+          # Install PRODUCTION dependencies only (no workspace refs)
+          cd deployment
+          npm install --production --legacy-peer-deps
+          cd ..
+
+      - name: 📦 Create deployment zip
+        run: |
+          cd deployment
+          zip -r ../api-deployment.zip .
+
+      - name: �🚀 Deploy to Azure App Service
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.AZURE_APP_SERVICE_NAME }}
           publish-profile: ${{ secrets.AZURE_APP_SERVICE_PUBLISH_PROFILE }}
-          package: apps/api
+          package: api-deployment.zip
