@@ -76,28 +76,6 @@ jobs:
           rm -rf deployment/node_modules/@group-pay/shared
           cp -r packages/shared deployment/node_modules/@group-pay/
 
-          # Create .deployment file to skip Azure's Oryx build system
-          cat > deployment/.deployment << 'EOF'
-          [config]
-          SCM_DO_BUILD_DURING_DEPLOYMENT=false
-          EOF
-
-          # Create startup script
-          cat > deployment/startup.sh << 'EOF'
-          #!/bin/bash
-          cd /home/site/wwwroot
-
-          # Run database migrations
-          npx prisma migrate deploy
-
-          # Generate Prisma client
-          npx prisma generate
-
-          # Start the application
-          node dist/index.js
-          EOF
-          chmod +x deployment/startup.sh
-
       - name: 📦 Create deployment zip
         run: |
           cd deployment
