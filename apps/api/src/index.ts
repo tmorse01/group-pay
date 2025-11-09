@@ -1,4 +1,8 @@
-import 'dotenv/config';
+// Only load dotenv in development
+if (process.env.NODE_ENV !== 'production') {
+  await import('dotenv/config');
+}
+
 import { createApp } from './app.js';
 import { env } from './config/env.js';
 import { prisma } from './lib/prisma.js';
