@@ -59,12 +59,26 @@ jobs:
 
       - name: 📦 Prepare deployment package
         run: |
-          # Use pnpm deploy to create a standalone bundle
-          pnpm --filter @group-pay/api deploy --prod deployment
+          # Create clean deployment directory
+          mkdir -p deployment
 
-          # Copy built code
+          # Copy built code and configs
           cp -r apps/api/dist deployment/
           cp -r apps/api/prisma deployment/
+          cp apps/api/package.json deployment/
+
+          # Copy the built shared package
+          mkdir -p deployment/node_modules/@group-pay
+          cp -r packages/shared deployment/node_modules/@group-pay/shared
+
+          # Install production dependencies using npm (not pnpm) to get real packages
+          cd deployment
+          # Remove workspace reference
+          npm pkg delete dependencies.@group-pay/shared
+          npm pkg delete devDependencies.@group-pay/config
+          # Install actual packages
+          npm install --omit=dev --legacy-peer-deps
+          cd ..
 
       - name: 🔍 Debug - Check deployment structure
         run: |
