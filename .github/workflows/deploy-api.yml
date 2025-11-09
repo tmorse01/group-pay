@@ -67,14 +67,9 @@ jobs:
 
           # Copy API build output
           cp -r apps/api/dist deployment/
-          cp -r apps/api/node_modules deployment/
           cp apps/api/package.json deployment/
+          cp apps/api/package-lock.json deployment/ 2>/dev/null || cp apps/api/pnpm-lock.yaml deployment/ 2>/dev/null || true
           cp apps/api/prisma deployment/ -r
-
-          # Copy shared package if needed
-          mkdir -p deployment/node_modules/@group-pay
-          rm -rf deployment/node_modules/@group-pay/shared
-          cp -r packages/shared deployment/node_modules/@group-pay/
 
       - name: 📦 Create deployment zip
         run: |
