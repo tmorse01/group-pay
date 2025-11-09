@@ -47,6 +47,9 @@ jobs:
       - name: 🏗️ Build shared packages
         run: pnpm -F @group-pay/shared build
 
+      - name: ⚙️ Generate Prisma client
+        run: pnpm -F @group-pay/api prisma:generate
+
       - name: 🏗️ Build API
         run: pnpm -F @group-pay/api build
 
