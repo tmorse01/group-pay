@@ -57,7 +57,7 @@ jobs:
         run: pnpm -F @group-pay/api test
         continue-on-error: true
 
-      - name: � Prepare deployment package
+      - name: 📦 Prepare deployment package
         run: |
           # Create deployment directory
           mkdir -p deployment
@@ -67,9 +67,16 @@ jobs:
           cp apps/api/package.json deployment/
           cp -r apps/api/prisma deployment/
 
-          # Install PRODUCTION dependencies only (no workspace refs)
+          # Copy the built shared package
+          mkdir -p deployment/node_modules/@group-pay
+          cp -r packages/shared deployment/node_modules/@group-pay/shared
+
+          # Remove workspace references from package.json
           cd deployment
-          npm install --production --legacy-peer-deps
+          sed -i 's/"@group-pay\/shared": "workspace:\*"/"@group-pay\/shared": "file:node_modules\/@group-pay\/shared"/g' package.json
+
+          # Install PRODUCTION dependencies only
+          npm install --omit=dev --legacy-peer-deps
           cd ..
 
       - name: 📦 Create deployment zip
