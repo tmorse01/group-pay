@@ -103,11 +103,3 @@ jobs:
           app-name: ${{ secrets.AZURE_APP_SERVICE_NAME }}
           publish-profile: ${{ secrets.AZURE_APP_SERVICE_PUBLISH_PROFILE }}
           package: api-deployment.zip
-
-      - name: 🏃‍♂️ Run database migrations
-        uses: azure/CLI@v1
-        with:
-          azcliversion: 2.30.0
-          inlineScript: |
-            # Run migrations via App Service SSH
-            az webapp ssh --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --name ${{ secrets.AZURE_APP_SERVICE_NAME }} --command "cd /home/site/wwwroot && npx prisma migrate deploy"
