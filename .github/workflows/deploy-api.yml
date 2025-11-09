@@ -88,42 +88,34 @@ jobs:
           echo "=== Package.json ==="
           cat deployment/package.json
           echo ""
+          echo "=== Bundled index.js ==="
+          if [ -f deployment/index.js ]; then
+            echo "✓ index.js exists"
+            echo "Size: $(du -sh deployment/index.js | cut -f1)"
+          else
+            echo "✗ index.js NOT found"
+          fi
+          echo ""
+          echo "=== Prisma folder ==="
+          if [ -d deployment/prisma ]; then
+            echo "✓ prisma folder exists"
+            ls deployment/prisma/
+          else
+            echo "✗ prisma folder NOT found"
+          fi
+          echo ""
           echo "=== Node modules check ==="
           if [ -d deployment/node_modules ]; then
             echo "✓ node_modules exists"
             echo "Size: $(du -sh deployment/node_modules | cut -f1)"
             echo ""
-            echo "Top-level packages:"
+            echo "Top-level packages (first 20):"
             ls deployment/node_modules/ | head -20
             echo ""
-            echo "Checking @group-pay/shared:"
-            if [ -d deployment/node_modules/@group-pay/shared ]; then
-              echo "✓ @group-pay/shared exists"
-              ls -lah deployment/node_modules/@group-pay/shared/
-              echo ""
-              echo "Shared package.json:"
-              cat deployment/node_modules/@group-pay/shared/package.json
-            else
-              echo "✗ @group-pay/shared NOT found"
-            fi
-            echo ""
-            echo "Checking for symlinks in node_modules:"
-            ls -lah deployment/node_modules/ | grep "^l" || echo "No symlinks found (good!)"
+            echo "Checking for symlinks:"
+            ls -lah deployment/node_modules/ | grep "^l" || echo "✓ No symlinks found (good!)"
           else
             echo "✗ node_modules NOT found"
-          fi
-          echo ""
-          echo "=== Checking built files ==="
-          if [ -f deployment/dist/index.js ]; then
-            echo "✓ dist/index.js exists"
-          else
-            echo "✗ dist/index.js NOT found"
-          fi
-          if [ -d deployment/dist/schemas ]; then
-            echo "✓ dist/schemas exists"
-            ls deployment/dist/schemas/
-          else
-            echo "✗ dist/schemas NOT found"
           fi
 
       - name: 📦 Create deployment zip
