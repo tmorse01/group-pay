@@ -57,17 +57,41 @@ jobs:
         run: pnpm -F @group-pay/api test
         continue-on-error: true
 
-      - name: 📦 Prepare deployment package using pnpm deploy
+      - name: 📦 Prepare deployment package (no symlinks!)
         run: |
-          # Use pnpm deploy to create a production-ready deployment
-          # This resolves workspace dependencies and creates a clean copy
-          pnpm --filter @group-pay/api --prod deploy deployment
+          # Create deployment directory
+          mkdir -p deployment
 
-          # Copy the built dist folder into the deployment
-          cp -r apps/api/dist/* deployment/
-
-          # Copy prisma folder for migrations
+          # Copy built API code
+          cp -r apps/api/dist deployment/
           cp -r apps/api/prisma deployment/
+          cp apps/api/package.json deployment/
+
+          # Pack the shared package as a tarball
+          cd packages/shared
+          npm pack
+          cd ../..
+
+          # Copy the tarball to deployment
+          cp packages/shared/*.tgz deployment/
+
+          # Install dependencies using npm (which creates real files, not symlinks)
+          cd deployment
+
+          # Replace workspace:* reference with the tarball
+          SHARED_TARBALL=$(ls *.tgz)
+          npm pkg set dependencies.@group-pay/shared="file:./$SHARED_TARBALL"
+
+          # Remove devDependencies entirely
+          npm pkg delete devDependencies
+
+          # Install with npm (creates real files!)
+          npm install --omit=dev --legacy-peer-deps
+
+          # Clean up the tarball
+          rm *.tgz
+
+          cd ..
 
       - name: 🔍 Debug - Verify deployment structure
         run: |
