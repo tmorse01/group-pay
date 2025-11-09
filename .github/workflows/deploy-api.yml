@@ -66,22 +66,36 @@ jobs:
           cp -r apps/api/dist deployment/
           cp -r apps/api/prisma deployment/
 
-          # Create a startup script that extracts node_modules
-          cat > deployment/startup.sh << 'EOF'
-          #!/bin/bash
-          cd /home/site/wwwroot
-          if [ -f node_modules.tar.gz ] && [ ! -d node_modules ]; then
-            echo "Extracting node_modules..."
-            tar -xzf node_modules.tar.gz
+      - name: 🔍 Debug - Check deployment structure
+        run: |
+          echo "=== Deployment directory contents ==="
+          ls -lah deployment/
+          echo ""
+          echo "=== Node modules check ==="
+          if [ -d deployment/node_modules ]; then
+            echo "✓ node_modules directory exists"
+            echo "Size: $(du -sh deployment/node_modules | cut -f1)"
+            echo "Contains fastify: $([ -d deployment/node_modules/fastify ] && echo 'YES' || echo 'NO')"
+            ls -lah deployment/node_modules/ | head -20
+          else
+            echo "✗ node_modules directory NOT found"
           fi
-          exec node dist/index.js
-          EOF
-          chmod +x deployment/startup.sh
+          echo ""
+          echo "=== Package.json ==="
+          cat deployment/package.json
+
+      - name: 📦 Create deployment zip
+        run: |
+          cd deployment
+          zip -r -q ../api-deployment.zip .
+          cd ..
+          echo "Deployment zip size: $(du -sh api-deployment.zip)"
+          echo "Deployment zip contents:"
+          unzip -l api-deployment.zip | head -50
 
       - name: 🚀 Deploy to Azure App Service
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.AZURE_APP_SERVICE_NAME }}
           publish-profile: ${{ secrets.AZURE_APP_SERVICE_PUBLISH_PROFILE }}
-          package: deployment
-          startup-command: 'bash startup.sh'
+          package: api-deployment.zip
