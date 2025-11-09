@@ -59,6 +59,9 @@ jobs:
 
       - name: 🏗️ Prepare deployment package
         run: |
+          # Remove old deployment directory if it exists
+          rm -rf deployment
+
           # Create deployment directory
           mkdir -p deployment
 
@@ -70,6 +73,7 @@ jobs:
 
           # Copy shared package if needed
           mkdir -p deployment/node_modules/@group-pay
+          rm -rf deployment/node_modules/@group-pay/shared
           cp -r packages/shared deployment/node_modules/@group-pay/
 
           # Create startup script
