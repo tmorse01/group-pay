@@ -88,6 +88,9 @@ importers:
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.2
+      prisma:
+        specifier: ^5.2.0
+        version: 5.22.0
       zod:
         specifier: ^3.25.76
         version: 3.25.76
@@ -119,9 +122,6 @@ importers:
       pino-pretty:
         specifier: ^13.1.1
         version: 13.1.1
-      prisma:
-        specifier: ^5.2.0
-        version: 5.22.0
       tsx:
         specifier: ^3.12.7
         version: 3.14.0
@@ -1945,12 +1945,14 @@ packages:
       {
         integrity: sha512-AUt44v3YJeggO2ZU5BkXI7M4hu9BF2zzH2iF2V5pyXT/lRTyWiElZ7It+bRH1EshoMRxHgpYg4VB6rCM+mG5jQ==,
       }
+    dev: false
 
   /@prisma/engines-version@5.22.0-44.605197351a3c8bdd595af2d2a9bc3025bca48ea2:
     resolution:
       {
         integrity: sha512-2PTmxFR2yHW/eB3uqWtcgRcgAbG1rwG9ZriSvQw+nnb7c4uCr3RAcGMb6/zfE88SKlC1Nj2ziUvc96Z379mHgQ==,
       }
+    dev: false
 
   /@prisma/engines@5.22.0:
     resolution:
@@ -1963,6 +1965,7 @@ packages:
       '@prisma/engines-version': 5.22.0-44.605197351a3c8bdd595af2d2a9bc3025bca48ea2
       '@prisma/fetch-engine': 5.22.0
       '@prisma/get-platform': 5.22.0
+    dev: false
 
   /@prisma/fetch-engine@5.22.0:
     resolution:
@@ -1973,6 +1976,7 @@ packages:
       '@prisma/debug': 5.22.0
       '@prisma/engines-version': 5.22.0-44.605197351a3c8bdd595af2d2a9bc3025bca48ea2
       '@prisma/get-platform': 5.22.0
+    dev: false
 
   /@prisma/get-platform@5.22.0:
     resolution:
@@ -1981,6 +1985,7 @@ packages:
       }
     dependencies:
       '@prisma/debug': 5.22.0
+    dev: false
 
   /@react-aria/autocomplete@3.0.0-rc.2(react-dom@19.1.1)(react@19.1.1):
     resolution:
@@ -9182,6 +9187,7 @@ packages:
       '@prisma/engines': 5.22.0
     optionalDependencies:
       fsevents: 2.3.3
+    dev: false
 
   /process-warning@3.0.0:
     resolution:
