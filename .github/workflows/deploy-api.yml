@@ -66,9 +66,22 @@ jobs:
           cp -r apps/api/dist deployment/
           cp -r apps/api/prisma deployment/
 
-      - name: Deploy to Azure App Service
+          # Create a startup script that extracts node_modules
+          cat > deployment/startup.sh << 'EOF'
+          #!/bin/bash
+          cd /home/site/wwwroot
+          if [ -f node_modules.tar.gz ] && [ ! -d node_modules ]; then
+            echo "Extracting node_modules..."
+            tar -xzf node_modules.tar.gz
+          fi
+          exec node dist/index.js
+          EOF
+          chmod +x deployment/startup.sh
+
+      - name: 🚀 Deploy to Azure App Service
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ secrets.AZURE_APP_SERVICE_NAME }}
           publish-profile: ${{ secrets.AZURE_APP_SERVICE_PUBLISH_PROFILE }}
           package: deployment
+          startup-command: 'bash startup.sh'
