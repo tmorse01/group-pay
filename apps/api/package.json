@@ -1,6 +1,7 @@
 {
   "name": "@group-pay/api",
   "version": "1.0.0",
+  "type": "module",
   "description": "Fastify API server for Group Pay",
   "main": "dist/index.js",
   "scripts": {
