@@ -22,14 +22,10 @@ terraform {
 }
 
 # Configure the Microsoft Azure Provider
-# Use service principal authentication (required for CI/CD)
+# Uses service principal authentication via environment variables in CI/CD:
+# ARM_CLIENT_ID, ARM_CLIENT_SECRET, ARM_SUBSCRIPTION_ID, ARM_TENANT_ID
 provider "azurerm" {
   features {}
-  
-  # Explicitly use service principal authentication
-  # These are set via environment variables in CI/CD:
-  # ARM_CLIENT_ID, ARM_CLIENT_SECRET, ARM_SUBSCRIPTION_ID, ARM_TENANT_ID
-  use_cli = false
 }
 
 # Random password for database
