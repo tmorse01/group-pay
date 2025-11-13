@@ -85,7 +85,7 @@ async function authPlugin(fastify: FastifyInstance) {
  */
 export async function requireVerifiedEmail(
   request: FastifyRequest,
-  reply: FastifyReply
+  _reply: FastifyReply
 ) {
   if (!request.authUser?.userId) {
     throw new UnauthorizedError('Not authenticated');
