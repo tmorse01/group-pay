@@ -10,6 +10,18 @@ import {
 import { prisma } from '../lib/prisma.js';
 import { authSchemas } from '../schemas/auth.js';
 import { createVerificationToken } from '../services/verification.js';
+import { env } from '../config/env.js';
+
+// Cookie options helper - use 'none' for cross-site cookies in production
+function getCookieOptions() {
+  const isProduction = env.NODE_ENV === 'production';
+  return {
+    httpOnly: true,
+    secure: isProduction, // Required for sameSite: 'none'
+    sameSite: isProduction ? ('none' as const) : ('lax' as const), // 'none' for cross-site, 'lax' for same-site
+    path: '/',
+  };
+}
 
 export default async function authRoutes(fastify: FastifyInstance) {
   // Register new user
@@ -56,7 +68,10 @@ export default async function authRoutes(fastify: FastifyInstance) {
         await createVerificationToken(user.id);
       } catch (error) {
         // Log error but don't fail registration
-        console.error('Failed to send verification email during registration:', error);
+        console.error(
+          'Failed to send verification email during registration:',
+          error
+        );
       }
 
       // Generate tokens
@@ -65,20 +80,15 @@ export default async function authRoutes(fastify: FastifyInstance) {
       const refreshToken = generateRefreshToken(tokenPayload);
 
       // Set httpOnly cookies
+      const cookieOptions = getCookieOptions();
       reply
         .setCookie('accessToken', accessToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
+          ...cookieOptions,
           maxAge: 15 * 60 * 1000, // 15 minutes
-          path: '/',
         })
         .setCookie('refreshToken', refreshToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
+          ...cookieOptions,
           maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-          path: '/',
         })
         .code(201);
 
@@ -115,20 +125,15 @@ export default async function authRoutes(fastify: FastifyInstance) {
       const refreshToken = generateRefreshToken(tokenPayload);
 
       // Set httpOnly cookies
+      const cookieOptions = getCookieOptions();
       reply
         .setCookie('accessToken', accessToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
+          ...cookieOptions,
           maxAge: 15 * 60 * 1000, // 15 minutes
-          path: '/',
         })
         .setCookie('refreshToken', refreshToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
+          ...cookieOptions,
           maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-          path: '/',
         });
 
       return {
@@ -169,18 +174,19 @@ export default async function authRoutes(fastify: FastifyInstance) {
         const newAccessToken = generateAccessToken(newTokenPayload);
 
         // Set new access token cookie
+        const cookieOptions = getCookieOptions();
         reply.setCookie('accessToken', newAccessToken, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
+          ...cookieOptions,
           maxAge: 15 * 60 * 1000, // 15 minutes
-          path: '/',
         });
 
         return { success: true };
       } catch {
         // Clear invalid refresh token
-        reply.clearCookie('refreshToken').clearCookie('accessToken');
+        const cookieOptions = getCookieOptions();
+        reply
+          .clearCookie('refreshToken', cookieOptions)
+          .clearCookie('accessToken', cookieOptions);
 
         throw new UnauthorizedError('Invalid refresh token');
       }
@@ -192,7 +198,10 @@ export default async function authRoutes(fastify: FastifyInstance) {
     '/logout',
     { schema: authSchemas.logout },
     async (request, reply) => {
-      reply.clearCookie('accessToken').clearCookie('refreshToken');
+      const cookieOptions = getCookieOptions();
+      reply
+        .clearCookie('accessToken', cookieOptions)
+        .clearCookie('refreshToken', cookieOptions);
 
       return { success: true };
     }
