@@ -6,18 +6,26 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 // API functions
 const receiptsApi = {
-  uploadReceipt: async (expenseId: string, file: File): Promise<{ receipt: Receipt }> => {
+  uploadReceipt: async (
+    expenseId: string,
+    file: File
+  ): Promise<{ receipt: Receipt }> => {
     const formData = new FormData();
     formData.append('file', file);
 
-    const response = await fetch(`${API_BASE_URL}/api/expenses/${expenseId}/receipts`, {
-      method: 'POST',
-      credentials: 'include',
-      body: formData,
-    });
+    const response = await fetch(
+      `${API_BASE_URL}/api/expenses/${expenseId}/receipts`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        body: formData,
+      }
+    );
 
     if (!response.ok) {
-      const error = await response.json().catch(() => ({ message: 'Upload failed' }));
+      const error = await response
+        .json()
+        .catch(() => ({ message: 'Upload failed' }));
       throw new Error(error.message || 'Upload failed');
     }
 
@@ -95,4 +103,3 @@ export function useDeleteReceipt() {
     },
   });
 }
-

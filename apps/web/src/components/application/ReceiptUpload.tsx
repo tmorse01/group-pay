@@ -1,5 +1,5 @@
 import { useRef, useState, useCallback } from 'react';
-import { Upload } from '@untitledui/icons';
+import { Upload01 } from '@untitledui/icons';
 import { Button } from '@/components/base/buttons/button';
 import { useUploadReceipt } from '@/services/receipts';
 import { validateReceiptFile } from '@group-pay/shared';
@@ -14,7 +14,7 @@ interface ReceiptUploadProps {
 export function ReceiptUpload({
   expenseId,
   onUploadComplete,
-  maxFiles = 10,
+  maxFiles: _maxFiles = 10,
   className,
 }: ReceiptUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -90,11 +90,14 @@ export function ReceiptUpload({
     fileInputRef.current?.click();
   };
 
-  const isImage = (mimeType: string) => {
+  // Helper functions for future use (e.g., file type detection, multi-file upload)
+  // @ts-expect-error - Reserved for future use
+  const _isImage = (mimeType: string) => {
     return mimeType.startsWith('image/');
   };
 
-  const isPdf = (mimeType: string) => {
+  // @ts-expect-error - Reserved for future use
+  const _isPdf = (mimeType: string) => {
     return mimeType === 'application/pdf';
   };
 
@@ -127,9 +130,9 @@ export function ReceiptUpload({
         <div className="flex flex-col items-center justify-center text-center">
           <div className="mb-3">
             {dragActive ? (
-              <Upload className="w-8 h-8 text-brand" />
+              <Upload01 className="w-8 h-8 text-brand" />
             ) : (
-              <Upload className="w-8 h-8 text-neutral-400" />
+              <Upload01 className="w-8 h-8 text-neutral-400" />
             )}
           </div>
 
@@ -150,7 +153,7 @@ export function ReceiptUpload({
             size="sm"
             color="primary"
             isDisabled={uploadMutation.isPending}
-            iconLeading={Upload}
+            iconLeading={Upload01}
           >
             {uploadMutation.isPending ? 'Uploading...' : 'Choose File'}
           </Button>
@@ -165,4 +168,3 @@ export function ReceiptUpload({
     </div>
   );
 }
-

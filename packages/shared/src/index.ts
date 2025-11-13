@@ -5,6 +5,7 @@ export * from './schemas/expense';
 export * from './schemas/settlement';
 export * from './schemas/invite';
 export * from './schemas/receipt';
+export * from './schemas/verification';
 
 // Export utilities
 export * from './utils/currency';

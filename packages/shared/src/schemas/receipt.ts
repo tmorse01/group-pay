@@ -11,4 +11,3 @@ export const ReceiptSchema = z.object({
 });
 
 export type Receipt = z.infer<typeof ReceiptSchema>;
-

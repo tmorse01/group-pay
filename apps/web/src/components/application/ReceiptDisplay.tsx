@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Download, Trash } from '@untitledui/icons';
+import { X, Download01, Trash01 } from '@untitledui/icons';
 import { Button } from '@/components/base/buttons/button';
 import type { Receipt } from '@group-pay/shared';
 
@@ -65,14 +65,18 @@ export function ReceiptDisplay({
             ) : isPdf ? (
               <div className="flex flex-col items-center justify-center p-4">
                 <div className="w-12 h-12 bg-neutral-300 dark:bg-neutral-600 rounded flex items-center justify-center mb-2">
-                  <span className="text-xs font-bold text-neutral-600 dark:text-neutral-300">PDF</span>
+                  <span className="text-xs font-bold text-neutral-600 dark:text-neutral-300">
+                    PDF
+                  </span>
                 </div>
                 <span className="text-xs text-neutral-500">PDF Receipt</span>
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center p-4">
                 <div className="w-12 h-12 bg-neutral-300 dark:bg-neutral-600 rounded flex items-center justify-center mb-2">
-                  <span className="text-xs font-bold text-neutral-600 dark:text-neutral-300">IMG</span>
+                  <span className="text-xs font-bold text-neutral-600 dark:text-neutral-300">
+                    IMG
+                  </span>
                 </div>
                 <span className="text-xs text-neutral-500">Receipt</span>
               </div>
@@ -92,7 +96,7 @@ export function ReceiptDisplay({
                   size="sm"
                   color="tertiary"
                   onClick={handleDownload}
-                  iconLeading={Download}
+                  iconLeading={Download01}
                 >
                   Download
                 </Button>
@@ -101,7 +105,7 @@ export function ReceiptDisplay({
                     size="sm"
                     color="primary-destructive"
                     onClick={handleDelete}
-                    iconLeading={Trash}
+                    iconLeading={Trash01}
                   >
                     Delete
                   </Button>
@@ -136,7 +140,6 @@ export function ReceiptDisplay({
               color="tertiary"
               onClick={() => setIsFullscreen(false)}
               iconLeading={X}
-              isIcon
             />
             {isImage ? (
               <img
@@ -154,7 +157,9 @@ export function ReceiptDisplay({
             ) : (
               <div className="bg-white dark:bg-neutral-800 p-8 rounded-lg text-center">
                 <div className="w-16 h-16 bg-neutral-300 dark:bg-neutral-600 rounded flex items-center justify-center mx-auto mb-4">
-                  <span className="text-lg font-bold text-neutral-600 dark:text-neutral-300">FILE</span>
+                  <span className="text-lg font-bold text-neutral-600 dark:text-neutral-300">
+                    FILE
+                  </span>
                 </div>
                 <p className="text-neutral-600 dark:text-neutral-300">
                   Preview not available
@@ -162,7 +167,7 @@ export function ReceiptDisplay({
                 <Button
                   className="mt-4"
                   onClick={handleDownload}
-                  iconLeading={Download}
+                  iconLeading={Download01}
                 >
                   Download File
                 </Button>
@@ -174,4 +179,3 @@ export function ReceiptDisplay({
     </>
   );
 }
-

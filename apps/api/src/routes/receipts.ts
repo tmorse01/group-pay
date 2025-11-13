@@ -1,6 +1,5 @@
 import { FastifyInstance, FastifyRequest } from 'fastify';
-import multipart from '@fastify/multipart';
-import { PrismaClient } from '@prisma/client';
+import multipart, { FastifyMultipartBaseOptions } from '@fastify/multipart';
 import {
   NotFoundError,
   ForbiddenError,
@@ -10,10 +9,9 @@ import {
 } from '@group-pay/shared';
 import { receiptSchemas } from '../schemas/receipts.js';
 import { storageService } from '../lib/storage.js';
+import { prisma } from '../lib/prisma.js';
 import path from 'path';
 import { promises as fs } from 'fs';
-
-const prisma = new PrismaClient();
 
 // Helper to ensure user is authenticated
 function requireAuth(request: FastifyRequest) {
@@ -74,7 +72,7 @@ export default async function receiptRoutes(fastify: FastifyInstance) {
         throw new ForbiddenError('You are not a member of this group');
       }
 
-      const data = await request.file();
+      const data = await (request as any).file();
 
       if (!data) {
         throw new ValidationError('No file provided');
@@ -256,7 +254,8 @@ export default async function receiptRoutes(fastify: FastifyInstance) {
     }
   );
 
-  // Serve receipt files (static file serving)
+  // Serve receipt files (static file serving for local storage only)
+  // For Azure storage, files are served directly via blob URLs
   fastify.get('/receipts/files/:filename', async (request, reply) => {
     const userId = requireAuth(request);
     const { filename } = request.params as { filename: string };
@@ -286,7 +285,16 @@ export default async function receiptRoutes(fastify: FastifyInstance) {
       throw new NotFoundError('Receipt');
     }
 
-    // Get file path
+    // If using Azure storage, redirect to blob URL or return 404
+    // (Azure blobs should be accessed directly via their URLs)
+    const storageType = process.env.STORAGE_TYPE || 'local';
+    if (storageType === 'azure') {
+      // Azure storage URLs are returned directly from getUrl()
+      // This endpoint should not be used for Azure storage
+      throw new NotFoundError('Receipt file not available via this endpoint');
+    }
+
+    // Get file path for local storage
     const filePath = path.resolve(
       process.cwd(),
       process.env.UPLOAD_DEST || 'uploads/receipts',
@@ -321,4 +329,3 @@ export default async function receiptRoutes(fastify: FastifyInstance) {
     }
   });
 }
-
