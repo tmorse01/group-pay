@@ -42,13 +42,71 @@ export async function createApp() {
 
   await app.register(cors, {
     origin: (origin, cb) => {
-      const hostname = new URL(origin || 'http://localhost').hostname;
-      if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        // Allow any port for localhost in development
+      // Allow requests with no origin (mobile apps, Postman, etc.)
+      if (!origin) {
         cb(null, true);
         return;
       }
-      cb(new Error('Not allowed'), false);
+
+      try {
+        const originUrl = new URL(origin);
+        const hostname = originUrl.hostname;
+
+        // Always allow localhost for development
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+          cb(null, true);
+          return;
+        }
+
+        // Parse allowed origins from environment variable (comma-separated)
+        const allowedOrigins = env.CORS_ORIGIN.split(',').map((o) => o.trim());
+
+        // Check if the origin matches any allowed origin
+        const isAllowed = allowedOrigins.some((allowedOrigin) => {
+          try {
+            const allowedUrl = new URL(allowedOrigin);
+            const allowedHostname = allowedUrl.hostname;
+
+            // Exact match
+            if (origin === allowedOrigin) {
+              return true;
+            }
+
+            // Hostname match
+            if (originUrl.hostname === allowedHostname) {
+              return true;
+            }
+
+            // Subdomain match (e.g., *.azurestaticapps.net)
+            if (originUrl.hostname.endsWith('.' + allowedHostname)) {
+              return true;
+            }
+
+            // Special handling for Azure Static Apps: allow any *.azurestaticapps.net subdomain
+            // if the allowed origin is an azurestaticapps.net domain
+            if (
+              allowedHostname.includes('azurestaticapps.net') &&
+              originUrl.hostname.endsWith('.azurestaticapps.net')
+            ) {
+              return true;
+            }
+
+            return false;
+          } catch {
+            // If allowedOrigin is not a valid URL, do exact string match
+            return origin === allowedOrigin;
+          }
+        });
+
+        if (isAllowed) {
+          cb(null, true);
+        } else {
+          cb(new Error('Not allowed by CORS'), false);
+        }
+      } catch {
+        // Invalid origin URL
+        cb(new Error('Invalid origin'), false);
+      }
     },
     credentials: true,
   });

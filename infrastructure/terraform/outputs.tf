@@ -88,3 +88,8 @@ output "storage_container_name" {
   description = "Name of the receipts container (if created)"
   value       = var.create_storage_account ? azurerm_storage_container.receipts[0].name : null
 }
+
+output "cors_origin" {
+  description = "Configured CORS origin(s) for the API"
+  value       = local.cors_origin
+}

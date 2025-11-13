@@ -92,3 +92,9 @@ variable "db_allowed_ips" {
   type        = list(string)
   default     = []
 }
+
+variable "cors_origins" {
+  description = "Additional CORS origins to allow (comma-separated). The Static Web App URL is automatically included."
+  type        = string
+  default     = ""
+}

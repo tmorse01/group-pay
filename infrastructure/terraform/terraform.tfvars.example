@@ -18,6 +18,11 @@ db_name          = "grouppay"
 db_sku_name      = "B_Standard_B1ms"  # Burstable tier (~$12/month)
 db_storage_mb    = 32768               # 32GB
 
+# CORS Configuration
+# The Static Web App URL is automatically included in CORS_ORIGIN
+# Add additional origins (comma-separated) if you have staging environments or custom domains
+# cors_origins = "https://staging.example.com,https://custom-domain.com"
+
 # Optional Features (enable when needed)
 create_key_vault        = false  # Enable for production secrets management (+$1/month)
 create_storage_account  = false  # Enable for file uploads (+$2-5/month)

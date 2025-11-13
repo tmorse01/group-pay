@@ -63,6 +63,10 @@ locals {
 
   # Construct database URL with properly encoded password
   database_url = "postgresql://${var.db_admin_username}:${local.db_password_encoded}@${azurerm_postgresql_flexible_server.main.fqdn}:5432/${var.db_name}?sslmode=require"
+
+  # Construct CORS_ORIGIN: Static Web App URL + any additional origins
+  static_web_app_url = "https://${azurerm_static_web_app.main.default_host_name}"
+  cors_origin = var.cors_origins != "" ? "${local.static_web_app_url},${var.cors_origins}" : local.static_web_app_url
 }
 
 # Create Resource Group
@@ -112,7 +116,7 @@ resource "azurerm_linux_web_app" "api" {
       JWT_SECRET   = random_password.jwt_secret.result
       NODE_ENV     = var.environment
       PORT         = "8080"
-      CORS_ORIGIN  = "https://${azurerm_static_web_app.main.default_host_name}"
+      CORS_ORIGIN  = local.cors_origin
     },
     var.create_storage_account ? {
       STORAGE_TYPE                    = "azure"
