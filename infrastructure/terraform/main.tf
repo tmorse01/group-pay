@@ -66,7 +66,7 @@ locals {
 
   # Construct CORS_ORIGIN: Static Web App URL + any additional origins
   static_web_app_url = "https://${azurerm_static_web_app.main.default_host_name}"
-  cors_origin = var.cors_origins != "" ? "${local.static_web_app_url},${var.cors_origins}" : local.static_web_app_url
+  cors_origin        = var.cors_origins != "" ? "${local.static_web_app_url},${var.cors_origins}" : local.static_web_app_url
 }
 
 # Create Resource Group
@@ -88,12 +88,26 @@ resource "azurerm_service_plan" "main" {
   tags = var.tags
 }
 
+# Create Static Web App (Frontend) - created before API to set CORS_ORIGIN
+resource "azurerm_static_web_app" "main" {
+  name                = "${var.app_name}-web"
+  resource_group_name = azurerm_resource_group.main.name
+  location            = "West US 2" # Static Web Apps have limited regions
+  sku_tier            = "Free"
+  sku_size            = "Free"
+
+  tags = var.tags
+}
+
 # Create App Service for API
 resource "azurerm_linux_web_app" "api" {
   name                = "${var.app_name}-api"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
   service_plan_id     = azurerm_service_plan.main.id
+
+  # Ensure Static Web App is created first so we can use its URL for CORS
+  depends_on = [azurerm_static_web_app.main]
 
   site_config {
     always_on = false
@@ -190,17 +204,6 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "allowed_ips" {
 resource "random_password" "jwt_secret" {
   length  = 64
   special = true
-}
-
-# Create Static Web App (Frontend)
-resource "azurerm_static_web_app" "main" {
-  name                = "${var.app_name}-web"
-  resource_group_name = azurerm_resource_group.main.name
-  location            = "West US 2" # Static Web Apps have limited regions
-  sku_tier            = "Free"
-  sku_size            = "Free"
-
-  tags = var.tags
 }
 
 # Optional: Key Vault for secrets (commented out for cost optimization)
