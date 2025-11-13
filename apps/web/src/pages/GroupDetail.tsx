@@ -456,7 +456,7 @@ export function GroupDetail() {
                         </div>
                         {member.user.venmoHandle && (
                           <div className="text-xs text-neutral-500 dark:text-neutral-400">
-                            Venmo: @{member.user.venmoHandle}
+                            Venmo: {member.user.venmoHandle}
                           </div>
                         )}
                       </div>
