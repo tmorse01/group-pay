@@ -93,10 +93,8 @@ class AzureStorageService implements StorageService {
       );
     }
 
-    this.containerName =
-      process.env.AZURE_STORAGE_CONTAINER_NAME || 'receipts';
-    this.accountName =
-      process.env.AZURE_STORAGE_ACCOUNT_NAME || '';
+    this.containerName = process.env.AZURE_STORAGE_CONTAINER_NAME || 'receipts';
+    this.accountName = process.env.AZURE_STORAGE_ACCOUNT_NAME || '';
 
     const blobServiceClient =
       BlobServiceClient.fromConnectionString(connectionString);
@@ -129,9 +127,7 @@ class AzureStorageService implements StorageService {
 
   async delete(fileUrl: string): Promise<void> {
     // Extract blob name from URL/path
-    const blobName = fileUrl.includes('/')
-      ? fileUrl
-      : `receipts/${fileUrl}`;
+    const blobName = fileUrl.includes('/') ? fileUrl : `receipts/${fileUrl}`;
 
     const blockBlobClient = this.containerClient.getBlockBlobClient(blobName);
 

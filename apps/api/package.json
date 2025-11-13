@@ -31,9 +31,11 @@
     "seed": "tsx src/scripts/seed.ts"
   },
   "dependencies": {
+    "@azure/storage-blob": "^12.17.0",
     "@fastify/cookie": "9",
     "@fastify/cors": "^8.3.0",
     "@fastify/jwt": "^7.2.0",
+    "@fastify/multipart": "^9.3.0",
     "@fastify/rate-limit": "^9.1.0",
     "@fastify/sensible": "^5.2.0",
     "@fastify/swagger": "^8.15.0",
