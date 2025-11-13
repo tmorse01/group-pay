@@ -28,8 +28,39 @@ provider "azurerm" {
 
 # Random password for database
 resource "random_password" "db_password" {
-  length  = 32
-  special = true
+  length           = 32
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>:?"
+}
+
+# Local value to properly encode database password for connection string
+locals {
+  # URL-encode the password by replacing special characters
+  db_password_encoded = replace(
+    replace(
+      replace(
+        replace(
+          replace(
+            replace(
+              replace(
+                replace(random_password.db_password.result, "%", "%25"),
+                "@", "%40"
+              ),
+              ":", "%3A"
+            ),
+            "/", "%2F"
+          ),
+          "?", "%3F"
+        ),
+        "#", "%23"
+      ),
+      "[", "%5B"
+    ),
+    "]", "%5D"
+  )
+  
+  # Construct database URL with properly encoded password
+  database_url = "postgresql://${var.db_admin_username}:${local.db_password_encoded}@${azurerm_postgresql_flexible_server.main.fqdn}:5432/${var.db_name}?sslmode=require"
 }
 
 # Create Resource Group
@@ -64,13 +95,32 @@ resource "azurerm_linux_web_app" "api" {
     application_stack {
       node_version = "20-lts"
     }
+
+    # Health check configuration
+    health_check_path                 = "/api/health"
+    health_check_eviction_time_in_min = 2
+
+    # Startup command for Node.js app
+    app_command_line = "node index.js"
   }
 
-  app_settings = {
-    DATABASE_URL = "postgresql://${var.db_admin_username}:${random_password.db_password.result}@${azurerm_postgresql_flexible_server.main.fqdn}:5432/${var.db_name}"
-    JWT_SECRET   = random_password.jwt_secret.result
-    NODE_ENV     = var.environment
-  }
+  app_settings = merge(
+    {
+      DATABASE_URL = local.database_url
+      JWT_SECRET   = random_password.jwt_secret.result
+      NODE_ENV      = var.environment
+      PORT          = "8080"
+      CORS_ORIGIN   = "https://${azurerm_static_web_app.main.default_host_name}"
+    },
+    var.create_storage_account ? {
+      STORAGE_TYPE                    = "azure"
+      AZURE_STORAGE_CONNECTION_STRING  = azurerm_storage_account.main[0].primary_connection_string
+      AZURE_STORAGE_ACCOUNT_NAME      = azurerm_storage_account.main[0].name
+      AZURE_STORAGE_CONTAINER_NAME    = azurerm_storage_container.receipts[0].name
+    } : {
+      STORAGE_TYPE = "local"
+    }
+  )
 
   tags = var.tags
 }
@@ -114,11 +164,20 @@ resource "azurerm_postgresql_flexible_server_firewall_rule" "azure_services" {
 
 # PostgreSQL Firewall Rule - Allow All (for development - restrict in production)
 resource "azurerm_postgresql_flexible_server_firewall_rule" "allow_all" {
-  count            = var.environment == "development" ? 1 : 0
+  count            = var.db_allow_all_ips ? 1 : 0
   name             = "AllowAll"
   server_id        = azurerm_postgresql_flexible_server.main.id
   start_ip_address = "0.0.0.0"
   end_ip_address   = "255.255.255.255"
+}
+
+# PostgreSQL Firewall Rule - Allow Specific IPs
+resource "azurerm_postgresql_flexible_server_firewall_rule" "allowed_ips" {
+  for_each         = toset(var.db_allowed_ips)
+  name             = "AllowIP-${replace(each.value, ".", "-")}"
+  server_id        = azurerm_postgresql_flexible_server.main.id
+  start_ip_address = each.value
+  end_ip_address   = each.value
 }
 
 # Random JWT secret
@@ -168,24 +227,25 @@ resource "azurerm_static_web_app" "main" {
 #   tags = var.tags
 # }
 
-# Optional: Storage Account for file uploads (commented out for cost optimization)
-# resource "azurerm_storage_account" "main" {
-#   count                    = var.create_storage_account ? 1 : 0
-#   name                     = "${replace(var.app_name, "-", "")}storage"
-#   resource_group_name      = azurerm_resource_group.main.name
-#   location                 = azurerm_resource_group.main.location
-#   account_tier             = "Standard"
-#   account_replication_type = "LRS"
+# Storage Account for file uploads
+resource "azurerm_storage_account" "main" {
+  count                    = var.create_storage_account ? 1 : 0
+  name                     = "${replace(var.app_name, "-", "")}storage${substr(md5("${var.app_name}${var.environment}"), 0, 8)}"
+  resource_group_name      = azurerm_resource_group.main.name
+  location                 = azurerm_resource_group.main.location
+  account_tier             = "Standard"
+  account_replication_type = "LRS"
+  min_tls_version          = "TLS1_2"
 
-#   tags = var.tags
-# }
+  tags = var.tags
+}
 
-# resource "azurerm_storage_container" "receipts" {
-#   count                 = var.create_storage_account ? 1 : 0
-#   name                  = "receipts"
-#   storage_account_name  = azurerm_storage_account.main[0].name
-#   container_access_type = "private"
-# }
+resource "azurerm_storage_container" "receipts" {
+  count                 = var.create_storage_account ? 1 : 0
+  name                  = "receipts"
+  storage_account_name  = azurerm_storage_account.main[0].name
+  container_access_type = "private"
+}
 
 # Optional: Application Insights (commented out for cost optimization)
 # resource "azurerm_log_analytics_workspace" "main" {

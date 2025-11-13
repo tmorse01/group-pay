@@ -16,6 +16,7 @@ import groupRoutes from './routes/groups.js';
 import expenseRoutes from './routes/expenses.js';
 import settlementRoutes from './routes/settlements.js';
 import userRoutes from './routes/users.js';
+import receiptRoutes from './routes/receipts.js';
 
 export async function createApp() {
   const app = Fastify({
@@ -81,6 +82,7 @@ export async function createApp() {
         { name: 'Expenses', description: 'Expense management endpoints' },
         { name: 'Settlements', description: 'Settlement/payment endpoints' },
         { name: 'Users', description: 'User management endpoints' },
+        { name: 'Receipts', description: 'Receipt upload and management endpoints' },
       ],
       securityDefinitions: {
         bearerAuth: {
@@ -117,6 +119,7 @@ export async function createApp() {
   await app.register(expenseRoutes, { prefix: '/api/expenses' });
   await app.register(settlementRoutes, { prefix: '/api/settlements' });
   await app.register(userRoutes, { prefix: '/api/users' });
+  await app.register(receiptRoutes, { prefix: '/api' });
 
   // Root endpoint
   app.get('/', async () => {

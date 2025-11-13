@@ -42,8 +42,23 @@ output "database_password" {
 
 output "database_url" {
   description = "Complete database connection string"
-  value       = "postgresql://${var.db_admin_username}:${random_password.db_password.result}@${azurerm_postgresql_flexible_server.main.fqdn}:5432/${var.db_name}?sslmode=require"
+  value       = local.database_url
   sensitive   = true
+}
+
+output "app_service_name" {
+  description = "Name of the App Service"
+  value       = azurerm_linux_web_app.api.name
+}
+
+output "app_service_url" {
+  description = "Full HTTPS URL of the App Service"
+  value       = "https://${azurerm_linux_web_app.api.default_hostname}"
+}
+
+output "app_service_default_hostname" {
+  description = "Default hostname of the App Service"
+  value       = azurerm_linux_web_app.api.default_hostname
 }
 
 output "jwt_secret" {
@@ -56,4 +71,20 @@ output "static_web_app_deployment_token" {
   description = "Deployment token for Static Web App"
   value       = azurerm_static_web_app.main.api_key
   sensitive   = true
+}
+
+output "storage_account_name" {
+  description = "Name of the Storage Account (if created)"
+  value       = var.create_storage_account ? azurerm_storage_account.main[0].name : null
+}
+
+output "storage_account_connection_string" {
+  description = "Connection string for the Storage Account (if created)"
+  value       = var.create_storage_account ? azurerm_storage_account.main[0].primary_connection_string : null
+  sensitive   = true
+}
+
+output "storage_container_name" {
+  description = "Name of the receipts container (if created)"
+  value       = var.create_storage_account ? azurerm_storage_container.receipts[0].name : null
 }

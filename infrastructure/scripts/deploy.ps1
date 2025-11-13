@@ -119,10 +119,17 @@ DATABASE_URL=$($outputs.database_url.value)
 DATABASE_HOST=$($outputs.database_host.value)
 RESOURCE_GROUP=$($outputs.resource_group_name.value)
 APP_SERVICE_NAME=$($outputs.app_service_name.value)
+APP_SERVICE_URL=$($outputs.app_service_url.value)
 STATIC_WEB_APP_NAME=$($outputs.static_web_app_name.value)
 STATIC_WEB_APP_TOKEN=$($outputs.static_web_app_deployment_token.value)
 JWT_SECRET=$($outputs.jwt_secret.value)
 "@
+    
+    # Add storage account outputs if storage is enabled
+    if ($outputs.storage_account_name.value) {
+        $envContent += "`nSTORAGE_ACCOUNT_NAME=$($outputs.storage_account_name.value)"
+        $envContent += "`nSTORAGE_CONTAINER_NAME=$($outputs.storage_container_name.value)"
+    }
     
     Set-Content -Path $envFile -Value $envContent
     Write-Host "[OK] Outputs saved to .env.azure" -ForegroundColor Green

@@ -80,3 +80,15 @@ variable "create_app_insights" {
   type        = bool
   default     = false
 }
+
+variable "db_allow_all_ips" {
+  description = "Whether to allow all IPs to access the database (for development only - security risk in production)"
+  type        = bool
+  default     = false
+}
+
+variable "db_allowed_ips" {
+  description = "List of specific IP addresses to allow database access"
+  type        = list(string)
+  default     = []
+}
