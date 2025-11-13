@@ -5,8 +5,9 @@ import { useTheme } from '@/hooks/useTheme';
 import { Input } from '@/components/base/input/input';
 import { Button } from '@/components/base/buttons/button';
 import { Avatar } from '@/components/base/avatar/avatar';
+import { ResendVerification } from '@/components/application/ResendVerification';
 import { cx } from '@/utils/cx';
-import { User01, Moon01, Sun, Monitor01 } from '@untitledui/icons';
+import { User01, Moon01, Sun, Monitor01, Mail01 } from '@untitledui/icons';
 
 export function Settings() {
   const { user } = useAuth();
@@ -269,6 +270,41 @@ export function Settings() {
         </div>
       </div>
 
+      {/* Email Verification Section */}
+      {!user.emailVerified && (
+        <div className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700">
+          <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">
+            <div className="flex items-center gap-3">
+              <Mail01 className="size-5 text-neutral-900 dark:text-neutral-50" />
+              <div>
+                <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
+                  Email Verification
+                </h3>
+                <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                  Verify your email address to access all features
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-yellow-500"></div>
+                <p className="text-sm text-neutral-900 dark:text-neutral-50">
+                  Your email address ({user.email}) is not verified
+                </p>
+              </div>
+              <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                Please check your email and click the verification link, or
+                request a new verification email below.
+              </p>
+              <ResendVerification />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Account Information */}
       <div className="bg-white dark:bg-neutral-800 rounded-lg border border-neutral-200 dark:border-neutral-700">
         <div className="p-6 border-b border-neutral-200 dark:border-neutral-700">
@@ -294,11 +330,42 @@ export function Settings() {
               <p className="text-sm font-medium text-neutral-900 dark:text-neutral-50">
                 Email
               </p>
-              <p className="text-sm text-neutral-600 dark:text-neutral-400">
-                {user.email}
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                  {user.email}
+                </p>
+                {user.emailVerified && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 rounded">
+                    <svg
+                      className="h-3 w-3"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    Verified
+                  </span>
+                )}
+              </div>
             </div>
           </div>
+
+          {user.emailVerified && user.emailVerifiedAt && (
+            <div className="flex justify-between items-center py-2 border-t border-neutral-200 dark:border-neutral-700">
+              <div>
+                <p className="text-sm font-medium text-neutral-900 dark:text-neutral-50">
+                  Verified At
+                </p>
+                <p className="text-sm text-neutral-600 dark:text-neutral-400">
+                  {new Date(user.emailVerifiedAt).toLocaleString()}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

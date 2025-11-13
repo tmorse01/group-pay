@@ -113,9 +113,19 @@ VITE_API_URL="$(terraform output -raw app_service_url)"
 # Deployment Configuration
 AZURE_RESOURCE_GROUP="$(terraform output -raw resource_group_name)"
 AZURE_APP_SERVICE_NAME="$(terraform output -raw app_service_name)"
+AZURE_APP_SERVICE_URL="$(terraform output -raw app_service_url)"
 AZURE_STATIC_WEB_APP_NAME="$(terraform output -raw static_web_app_name)"
 AZURE_STATIC_WEB_APP_TOKEN="$(terraform output -raw static_web_app_deployment_token)"
 EOF
+
+# Add storage account outputs if storage is enabled
+STORAGE_ACCOUNT_NAME=$(terraform output -raw storage_account_name 2>/dev/null || echo "")
+if [ -n "$STORAGE_ACCOUNT_NAME" ] && [ "$STORAGE_ACCOUNT_NAME" != "null" ]; then
+    echo "" >> ../../.env.azure
+    echo "# Storage Configuration" >> ../../.env.azure
+    echo "STORAGE_ACCOUNT_NAME=\"$STORAGE_ACCOUNT_NAME\"" >> ../../.env.azure
+    echo "STORAGE_CONTAINER_NAME=\"$(terraform output -raw storage_container_name)\"" >> ../../.env.azure
+fi
 
 echo -e "${GREEN}✅ Application environment file created at ../../.env.azure${NC}"
 echo -e "${YELLOW}⚠️  Remember to add *.env.* to .gitignore to protect secrets${NC}"

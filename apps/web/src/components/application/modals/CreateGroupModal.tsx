@@ -1,8 +1,11 @@
 import { useState } from 'react';
+import { X } from '@untitledui/icons';
 import { Button } from '@/components/base/buttons/button';
+import { Input } from '@/components/base/input/input';
+import { Select } from '@/components/base/select/select';
+import type { SelectItemType } from '@/components/base/select/select';
 import { Modal, ModalOverlay, Dialog } from './modal';
 import { useCreateGroup } from '@/services/groups';
-import { cx } from '@/utils/cx';
 
 interface CreateGroupModalProps {
   isOpen: boolean;
@@ -14,13 +17,13 @@ interface FormData {
   currency: string;
 }
 
-const CURRENCIES = [
-  { code: 'USD', name: 'US Dollar', symbol: '$' },
-  { code: 'EUR', name: 'Euro', symbol: '€' },
-  { code: 'GBP', name: 'British Pound', symbol: '£' },
-  { code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
-  { code: 'CAD', name: 'Canadian Dollar', symbol: '$' },
-  { code: 'AUD', name: 'Australian Dollar', symbol: '$' },
+const CURRENCIES: SelectItemType[] = [
+  { id: 'USD', label: 'USD', supportingText: 'US Dollar ($)' },
+  { id: 'EUR', label: 'EUR', supportingText: 'Euro (€)' },
+  { id: 'GBP', label: 'GBP', supportingText: 'British Pound (£)' },
+  { id: 'JPY', label: 'JPY', supportingText: 'Japanese Yen (¥)' },
+  { id: 'CAD', label: 'CAD', supportingText: 'Canadian Dollar ($)' },
+  { id: 'AUD', label: 'AUD', supportingText: 'Australian Dollar ($)' },
 ];
 
 export function CreateGroupModal({ isOpen, onClose }: CreateGroupModalProps) {
@@ -28,28 +31,22 @@ export function CreateGroupModal({ isOpen, onClose }: CreateGroupModalProps) {
     name: '',
     currency: 'USD',
   });
-  const [errors, setErrors] = useState<Partial<FormData>>({});
+  const [nameError, setNameError] = useState<string | undefined>();
   const createGroupMutation = useCreateGroup();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Validate form
-    const newErrors: Partial<FormData> = {};
     if (!formData.name.trim()) {
-      newErrors.name = 'Group name is required';
+      setNameError('Group name is required');
+      return;
     } else if (formData.name.length > 100) {
-      newErrors.name = 'Group name must be less than 100 characters';
-    }
-
-    if (!formData.currency) {
-      newErrors.currency = 'Currency is required';
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
+      setNameError('Group name must be less than 100 characters');
       return;
     }
+
+    setNameError(undefined);
 
     try {
       await createGroupMutation.mutateAsync({
@@ -59,7 +56,7 @@ export function CreateGroupModal({ isOpen, onClose }: CreateGroupModalProps) {
 
       // Reset form and close modal
       setFormData({ name: '', currency: 'USD' });
-      setErrors({});
+      setNameError(undefined);
       onClose();
     } catch (error) {
       console.error('Failed to create group:', error);
@@ -69,7 +66,7 @@ export function CreateGroupModal({ isOpen, onClose }: CreateGroupModalProps) {
 
   const handleClose = () => {
     setFormData({ name: '', currency: 'USD' });
-    setErrors({});
+    setNameError(undefined);
     onClose();
   };
 
@@ -84,94 +81,51 @@ export function CreateGroupModal({ isOpen, onClose }: CreateGroupModalProps) {
                 <h2 className="text-xl font-semibold text-neutral-900 dark:text-neutral-50">
                   Create New Group
                 </h2>
-                <button
+                <Button
+                  color="tertiary"
+                  size="sm"
                   onClick={handleClose}
-                  className="text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors"
                   aria-label="Close"
-                >
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
+                  iconLeading={X}
+                />
               </div>
             </div>
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="px-6 py-4 space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                  Group Name *
-                </label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => {
-                    setFormData((prev) => ({ ...prev, name: e.target.value }));
-                    if (errors.name)
-                      setErrors((prev) => ({ ...prev, name: undefined }));
-                  }}
-                  placeholder="Enter group name..."
-                  className={cx(
-                    'w-full px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-50',
-                    'focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors',
-                    'placeholder-neutral-500 dark:placeholder-neutral-400',
-                    errors.name
-                      ? 'border-red-300 dark:border-red-600'
-                      : 'border-neutral-300 dark:border-neutral-600'
-                  )}
-                  required
-                />
-                {errors.name && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                    {errors.name}
-                  </p>
-                )}
-              </div>
+              <Input
+                label="Group Name"
+                value={formData.name}
+                onChange={(value) => {
+                  setFormData((prev) => ({ ...prev, name: value }));
+                  if (nameError) setNameError(undefined);
+                }}
+                placeholder="Enter group name..."
+                isRequired
+                isInvalid={!!nameError}
+                hint={nameError}
+              />
 
-              <div>
-                <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-2">
-                  Currency
-                </label>
-                <select
-                  value={formData.currency}
-                  onChange={(e) => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      currency: e.target.value,
-                    }));
-                    if (errors.currency)
-                      setErrors((prev) => ({ ...prev, currency: undefined }));
-                  }}
-                  className={cx(
-                    'w-full px-3 py-2 border rounded-lg bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-50',
-                    'focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors',
-                    errors.currency
-                      ? 'border-red-300 dark:border-red-600'
-                      : 'border-neutral-300 dark:border-neutral-600'
-                  )}
-                >
-                  {CURRENCIES.map((currency) => (
-                    <option key={currency.code} value={currency.code}>
-                      {currency.code} - {currency.name} ({currency.symbol})
-                    </option>
-                  ))}
-                </select>
-                {errors.currency && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">
-                    {errors.currency}
-                  </p>
+              <Select
+                label="Currency"
+                selectedKey={formData.currency}
+                onSelectionChange={(key) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    currency: key as string,
+                  }));
+                }}
+                items={CURRENCIES}
+                placeholder="Select currency"
+              >
+                {(item) => (
+                  <Select.Item
+                    id={item.id}
+                    label={item.label}
+                    supportingText={item.supportingText}
+                  />
                 )}
-              </div>
+              </Select>
             </form>
 
             {/* Footer */}

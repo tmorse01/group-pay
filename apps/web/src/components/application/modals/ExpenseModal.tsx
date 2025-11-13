@@ -17,6 +17,7 @@ import { InputGroup } from '@/components/base/input/input-group';
 import { InputBase } from '@/components/base/input/input';
 import { formatCurrency } from '@/utils/currency';
 import type { ExpenseSplitType, UpdateExpenseDto } from '@group-pay/shared';
+import { ReceiptList } from '@/components/application/ReceiptList';
 
 interface BaseExpenseModalProps {
   isOpen: boolean;
@@ -459,6 +460,9 @@ export function ExpenseModal(props: ExpenseModalProps) {
                     items={[
                       { id: 'basic', label: 'Basic Info' },
                       { id: 'participants', label: 'Participants' },
+                      ...(mode === 'edit' && props.expense
+                        ? [{ id: 'receipts', label: 'Receipts' }]
+                        : []),
                     ]}
                     type="underline"
                     className="mt-4 px-6 border-b border-neutral-200 dark:border-neutral-700"
@@ -705,6 +709,13 @@ export function ExpenseModal(props: ExpenseModalProps) {
                       </div>
                     </div>
                   </Tabs.Panel>
+
+                  {/* Receipts Tab - Only show in edit mode */}
+                  {mode === 'edit' && props.expense && (
+                    <Tabs.Panel id="receipts" className="px-6 py-4">
+                      <ReceiptList expenseId={props.expense.id} />
+                    </Tabs.Panel>
+                  )}
                 </Tabs>
               </UiForm>
             </div>

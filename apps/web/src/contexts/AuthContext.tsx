@@ -9,6 +9,8 @@ interface User {
   photoUrl?: string | null;
   venmoHandle?: string | null;
   paypalLink?: string | null;
+  emailVerified?: boolean;
+  emailVerifiedAt?: string | null;
 }
 
 interface AuthContextType {

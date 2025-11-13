@@ -37,7 +37,27 @@ const envSchema = z.object({
 
   // File Upload
   MAX_FILE_SIZE: z.coerce.number().default(5242880), // 5MB
-  UPLOAD_DEST: z.string().default('uploads/'),
+  UPLOAD_DEST: z.string().default('uploads/receipts'),
+  STORAGE_TYPE: z.enum(['local', 's3', 'azure']).default('local'),
+
+  // Email Configuration
+  EMAIL_FROM: z.string().email().optional(),
+  EMAIL_FROM_NAME: z.string().default('Group Pay'),
+  EMAIL_SERVICE: z.enum(['smtp', 'sendgrid']).default('smtp'),
+
+  // SMTP Configuration
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.coerce.number().optional(),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASSWORD: z.string().optional(),
+  SMTP_SECURE: z.coerce.boolean().default(true),
+
+  // SendGrid Configuration
+  SENDGRID_API_KEY: z.string().optional(),
+
+  // Verification
+  VERIFICATION_TOKEN_EXPIRY_HOURS: z.coerce.number().default(24),
+  VERIFICATION_BASE_URL: z.string().url().default('http://localhost:5173'),
 });
 
 export type EnvConfig = z.infer<typeof envSchema>;

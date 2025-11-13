@@ -7,6 +7,8 @@ export const UserSchema = z.object({
   photoUrl: z.string().url().nullable(),
   venmoHandle: z.string().max(50).nullable(),
   paypalLink: z.string().url().nullable(),
+  emailVerified: z.boolean(),
+  emailVerifiedAt: z.date().nullable(),
   createdAt: z.date(),
 });
 
