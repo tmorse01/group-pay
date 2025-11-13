@@ -1,4 +1,11 @@
 import { z } from 'zod';
+import { config } from 'dotenv';
+
+// Load environment variables from .env file (only in non-production)
+// dotenv will look for .env in process.cwd() (should be apps/api directory)
+if (process.env.NODE_ENV !== 'production') {
+  config();
+}
 
 const envSchema = z.object({
   // Database
