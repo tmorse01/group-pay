@@ -1,6 +1,7 @@
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 import { env } from '../config/env.js';
+import { UnauthorizedError } from '@group-pay/shared';
 
 export async function hashPassword(password: string): Promise<string> {
   return argon2.hash(password, {
@@ -50,4 +51,11 @@ export function verifyToken(token: string): JWTPayload {
     issuer: 'group-pay-api',
     audience: 'group-pay-web',
   }) as JWTPayload;
+}
+
+export function requireAuth(request: { authUser?: JWTPayload }): string {
+  if (!request.authUser?.userId) {
+    throw new UnauthorizedError('Not authenticated');
+  }
+  return request.authUser.userId;
 }

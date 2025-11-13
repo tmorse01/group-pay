@@ -58,7 +58,7 @@ locals {
     ),
     "]", "%5D"
   )
-  
+
   # Construct database URL with properly encoded password
   database_url = "postgresql://${var.db_admin_username}:${local.db_password_encoded}@${azurerm_postgresql_flexible_server.main.fqdn}:5432/${var.db_name}?sslmode=require"
 }
@@ -91,7 +91,7 @@ resource "azurerm_linux_web_app" "api" {
 
   site_config {
     always_on = false
-    
+
     application_stack {
       node_version = "20-lts"
     }
@@ -108,16 +108,16 @@ resource "azurerm_linux_web_app" "api" {
     {
       DATABASE_URL = local.database_url
       JWT_SECRET   = random_password.jwt_secret.result
-      NODE_ENV      = var.environment
-      PORT          = "8080"
-      CORS_ORIGIN   = "https://${azurerm_static_web_app.main.default_host_name}"
+      NODE_ENV     = var.environment
+      PORT         = "8080"
+      CORS_ORIGIN  = "https://${azurerm_static_web_app.main.default_host_name}"
     },
     var.create_storage_account ? {
       STORAGE_TYPE                    = "azure"
-      AZURE_STORAGE_CONNECTION_STRING  = azurerm_storage_account.main[0].primary_connection_string
+      AZURE_STORAGE_CONNECTION_STRING = azurerm_storage_account.main[0].primary_connection_string
       AZURE_STORAGE_ACCOUNT_NAME      = azurerm_storage_account.main[0].name
       AZURE_STORAGE_CONTAINER_NAME    = azurerm_storage_container.receipts[0].name
-    } : {
+      } : {
       STORAGE_TYPE = "local"
     }
   )

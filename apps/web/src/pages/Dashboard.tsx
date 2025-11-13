@@ -5,6 +5,7 @@ import { DashboardStats } from '@/components/application/DashboardStats';
 import { BalanceSummary } from '@/components/application/BalanceSummary';
 import { RecentActivity } from '@/components/application/RecentActivity';
 import { CreateGroupModal } from '@/components/application/modals/CreateGroupModal';
+import { EmailVerificationBanner } from '@/components/application/EmailVerificationBanner';
 import { useGroups } from '@/services/groups';
 import { LoadingSpinner } from '@/components/application/LoadingSpinner';
 import { ErrorState } from '@/components/application/ErrorState';
@@ -20,6 +21,9 @@ export function Dashboard() {
 
   return (
     <div className="space-y-6">
+      {/* Email Verification Banner */}
+      <EmailVerificationBanner />
+
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>

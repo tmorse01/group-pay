@@ -8,6 +8,7 @@ import { Expenses } from '@/pages/Expenses';
 import { Settings } from '@/pages/Settings';
 import { Login } from '@/pages/Login';
 import { Landing } from '@/pages/Landing';
+import { VerifyEmail } from '@/pages/VerifyEmail';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -44,6 +45,7 @@ export function Router() {
           isAuthenticated ? <Navigate to="/dashboard" replace /> : <Login />
         }
       />
+      <Route path="/verify-email" element={<VerifyEmail />} />
       <Route
         path="/dashboard"
         element={

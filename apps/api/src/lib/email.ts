@@ -38,16 +38,18 @@ class SMTPEmailService implements EmailService {
         host: env.SMTP_HOST,
         port: env.SMTP_PORT || 587,
         secure: env.SMTP_SECURE,
-        auth: env.SMTP_USER && env.SMTP_PASSWORD
-          ? {
-              user: env.SMTP_USER,
-              pass: env.SMTP_PASSWORD,
-            }
-          : undefined,
+        auth:
+          env.SMTP_USER && env.SMTP_PASSWORD
+            ? {
+                user: env.SMTP_USER,
+                pass: env.SMTP_PASSWORD,
+              }
+            : undefined,
       });
     } else {
-      // Development: Use Ethereal Email (fake SMTP for testing)
+      // Development: Create a test account (will be created on first use)
       // In production, this should be configured properly
+      // For now, we'll create a simple transporter that logs emails
       this.transporter = nodemailer.createTransport({
         host: 'smtp.ethereal.email',
         port: 587,
@@ -80,14 +82,29 @@ class SMTPEmailService implements EmailService {
     try {
       const info = await this.transporter.sendMail(mailOptions);
       console.log('Verification email sent:', info.messageId);
-      
-      // In development with Ethereal, log the preview URL
-      if (env.NODE_ENV === 'development' && info.response.includes('ethereal')) {
-        console.log('Preview URL:', nodemailer.getTestMessageUrl(info));
+
+      // In development, log the preview URL if using Ethereal
+      if (env.NODE_ENV === 'development') {
+        try {
+          const previewUrl = nodemailer.getTestMessageUrl(info);
+          if (previewUrl) {
+            console.log('📧 Preview email at:', previewUrl);
+          }
+        } catch {
+          // Not using Ethereal, that's fine
+        }
       }
     } catch (error) {
       console.error('Error sending verification email:', error);
-      throw new Error('Failed to send verification email');
+      // In development, don't fail completely - just log
+      if (env.NODE_ENV === 'development') {
+        console.warn(
+          '⚠️ Email sending failed in development. Email would be sent in production.'
+        );
+        console.warn('Verification URL would be:', verificationUrl);
+      } else {
+        throw new Error('Failed to send verification email');
+      }
     }
   }
 
@@ -111,18 +128,32 @@ class SMTPEmailService implements EmailService {
     try {
       const info = await this.transporter.sendMail(mailOptions);
       console.log('Resend verification email sent:', info.messageId);
-      
-      // In development with Ethereal, log the preview URL
-      if (env.NODE_ENV === 'development' && info.response.includes('ethereal')) {
-        console.log('Preview URL:', nodemailer.getTestMessageUrl(info));
+
+      // In development, log the preview URL if using Ethereal
+      if (env.NODE_ENV === 'development') {
+        try {
+          const previewUrl = nodemailer.getTestMessageUrl(info);
+          if (previewUrl) {
+            console.log('📧 Preview email at:', previewUrl);
+          }
+        } catch {
+          // Not using Ethereal, that's fine
+        }
       }
     } catch (error) {
       console.error('Error sending resend verification email:', error);
-      throw new Error('Failed to send verification email');
+      // In development, don't fail completely - just log
+      if (env.NODE_ENV === 'development') {
+        console.warn(
+          '⚠️ Email sending failed in development. Email would be sent in production.'
+        );
+        console.warn('Verification URL would be:', verificationUrl);
+      } else {
+        throw new Error('Failed to send verification email');
+      }
     }
   }
 }
 
 // Export singleton instance
 export const emailService = new SMTPEmailService();
-

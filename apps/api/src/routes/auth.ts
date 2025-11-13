@@ -9,6 +9,7 @@ import {
 } from '../utils/auth.js';
 import { prisma } from '../lib/prisma.js';
 import { authSchemas } from '../schemas/auth.js';
+import { createVerificationToken } from '../services/verification.js';
 
 export default async function authRoutes(fastify: FastifyInstance) {
   // Register new user
@@ -39,14 +40,24 @@ export default async function authRoutes(fastify: FastifyInstance) {
           email,
           passwordHash,
           name,
+          emailVerified: false, // New users start unverified
         },
         select: {
           id: true,
           email: true,
           name: true,
+          emailVerified: true,
           createdAt: true,
         },
       });
+
+      // Create verification token and send email (don't fail registration if email fails)
+      try {
+        await createVerificationToken(user.id);
+      } catch (error) {
+        // Log error but don't fail registration
+        console.error('Failed to send verification email during registration:', error);
+      }
 
       // Generate tokens
       const tokenPayload = { userId: user.id, email: user.email };
@@ -202,6 +213,8 @@ export default async function authRoutes(fastify: FastifyInstance) {
         photoUrl: true,
         venmoHandle: true,
         paypalLink: true,
+        emailVerified: true,
+        emailVerifiedAt: true,
         createdAt: true,
       },
     });
