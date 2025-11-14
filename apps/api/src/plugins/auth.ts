@@ -118,25 +118,38 @@ async function authPlugin(fastify: FastifyInstance) {
         email: payload.email,
       });
     } catch (error) {
+      // Check TokenExpiredError FIRST because it extends JsonWebTokenError
+      if (error instanceof jwt.TokenExpiredError) {
+        fastify.log.debug({
+          msg: 'Token expired - client should refresh',
+          path: normalizedPath,
+          method: request.method,
+        });
+        throw new UnauthorizedError('Token expired');
+      }
+
+      if (error instanceof jwt.JsonWebTokenError) {
+        fastify.log.warn({
+          msg: 'Token verification failed',
+          error: error.message,
+          errorType: 'JsonWebTokenError',
+          path: normalizedPath,
+          method: request.method,
+          tokenLength: token.length,
+          tokenPrefix: token.substring(0, 10) + '...',
+        });
+        throw new UnauthorizedError('Invalid token');
+      }
+
       fastify.log.warn({
         msg: 'Token verification failed',
         error: error instanceof Error ? error.message : String(error),
-        errorType:
-          error instanceof jwt.JsonWebTokenError
-            ? 'JsonWebTokenError'
-            : error instanceof jwt.TokenExpiredError
-              ? 'TokenExpiredError'
-              : 'UnknownError',
+        errorType: 'UnknownError',
+        path: normalizedPath,
+        method: request.method,
         tokenLength: token.length,
         tokenPrefix: token.substring(0, 10) + '...',
       });
-
-      if (error instanceof jwt.JsonWebTokenError) {
-        throw new UnauthorizedError('Invalid token');
-      }
-      if (error instanceof jwt.TokenExpiredError) {
-        throw new UnauthorizedError('Token expired');
-      }
       throw new UnauthorizedError('Token verification failed');
     }
   });

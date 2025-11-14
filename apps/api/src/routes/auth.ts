@@ -205,7 +205,21 @@ export default async function authRoutes(fastify: FastifyInstance) {
     async (request, reply) => {
       const refreshToken = request.cookies?.refreshToken;
 
+      fastify.log.info({
+        msg: 'Token refresh attempt',
+        hasRefreshToken: !!refreshToken,
+        hasCookies: !!request.cookies,
+        cookieKeys: request.cookies ? Object.keys(request.cookies) : [],
+        origin: request.headers.origin,
+        referer: request.headers.referer,
+      });
+
       if (!refreshToken) {
+        fastify.log.warn({
+          msg: 'Refresh failed - no refresh token',
+          hasCookies: !!request.cookies,
+          cookieKeys: request.cookies ? Object.keys(request.cookies) : [],
+        });
         throw new UnauthorizedError('No refresh token provided');
       }
 

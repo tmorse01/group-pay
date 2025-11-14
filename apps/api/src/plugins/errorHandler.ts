@@ -5,8 +5,32 @@ import { AppError } from '@group-pay/shared';
 async function errorHandlerPlugin(fastify: FastifyInstance) {
   fastify.setErrorHandler(
     (error: FastifyError & Partial<AppError>, request, reply) => {
-      // Log error for debugging
-      fastify.log.error(error);
+      // Don't log expected authentication errors as errors (they're normal)
+      // Log them at debug level instead to reduce noise
+      const isExpectedAuthError =
+        error.httpStatus === 401 &&
+        (error.code === 'UNAUTHORIZED' || error.message.includes('expired'));
+
+      if (isExpectedAuthError) {
+        fastify.log.debug({
+          msg: 'Authentication failed (expected)',
+          code: error.code,
+          message: error.message,
+          path: request.routerPath || request.url,
+          method: request.method,
+        });
+      } else {
+        // Log actual errors
+        fastify.log.error({
+          msg: 'Request error',
+          error: error.message,
+          code: error.code,
+          httpStatus: error.httpStatus,
+          path: request.routerPath || request.url,
+          method: request.method,
+          stack: error.stack,
+        });
+      }
 
       // Handle validation errors
       if (error.validation) {
