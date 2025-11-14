@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { useLogin } from '@/services/auth';
 import { Button } from '@/components/base/buttons/button';
 
 export function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { login, isLoading } = useAuth();
+  const { login } = useAuth();
+  const loginMutation = useLogin();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,7 +83,7 @@ export function Login() {
           <div>
             <Button
               type="submit"
-              isLoading={isLoading}
+              isLoading={loginMutation.isPending}
               color="primary"
               className="w-full flex justify-center py-2 px-4"
             >

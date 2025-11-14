@@ -2,7 +2,44 @@ import { createApp } from './app.js';
 import { env } from './config/env.js';
 import { prisma } from './lib/prisma.js';
 
+// Initialize Application Insights if connection string is available
+// This must be done early to properly instrument the app
+async function initializeApplicationInsights() {
+  if (process.env.APPLICATIONINSIGHTS_CONNECTION_STRING) {
+    try {
+      // Dynamic import to ensure it loads properly
+      const appInsightsModule = await import('applicationinsights');
+      const appInsights = appInsightsModule.default || appInsightsModule;
+
+      appInsights
+        .setup(process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
+        .setAutoDependencyCorrelation(true)
+        .setAutoCollectRequests(true)
+        .setAutoCollectPerformance(true, true)
+        .setAutoCollectExceptions(true)
+        .setAutoCollectDependencies(true)
+        .setAutoCollectConsole(true, false) // Collect console logs but don't override console methods
+        .setUseDiskRetryCaching(true)
+        .setSendLiveMetrics(false)
+        .setDistributedTracingMode(
+          appInsights.DistributedTracingModes.AI_AND_W3C
+        )
+        .start();
+
+      console.log('[APPLICATIONINSIGHTS] Initialized successfully');
+      console.log(
+        '[APPLICATIONINSIGHTS] Instrumentation Key:',
+        process.env.APPINSIGHTS_INSTRUMENTATIONKEY?.substring(0, 8) + '...'
+      );
+    } catch (error) {
+      console.error('[APPLICATIONINSIGHTS] Failed to initialize:', error);
+    }
+  }
+}
+
 async function start() {
+  // Initialize Application Insights before starting the app
+  await initializeApplicationInsights();
   try {
     // Create the app instance
     const app = await createApp();

@@ -74,6 +74,15 @@ async function request<T>(
       throw error;
     }
 
+    // Handle abort/timeout errors
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new ApiError(
+        'Request timeout - please check your connection',
+        0,
+        error
+      );
+    }
+
     // Handle network errors
     throw new ApiError(
       'Network error - please check your connection',

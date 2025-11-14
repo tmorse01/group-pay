@@ -43,6 +43,7 @@
     "@group-pay/shared": "workspace:*",
     "@prisma/client": "^5.2.0",
     "@types/nodemailer": "^7.0.3",
+    "applicationinsights": "^2.9.5",
     "argon2": "^0.31.0",
     "dotenv": "^16.3.1",
     "fastify": "^4.29.1",
