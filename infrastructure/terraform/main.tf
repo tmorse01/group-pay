@@ -139,7 +139,12 @@ resource "azurerm_linux_web_app" "api" {
       AZURE_STORAGE_CONTAINER_NAME    = azurerm_storage_container.receipts[0].name
       } : {
       STORAGE_TYPE = "local"
-    }
+    },
+    var.create_app_insights ? {
+      APPINSIGHTS_INSTRUMENTATIONKEY        = azurerm_application_insights.main[0].instrumentation_key
+      APPLICATIONINSIGHTS_CONNECTION_STRING = azurerm_application_insights.main[0].connection_string
+      APPINSIGHTS_ENABLED                   = "true"
+    } : {}
   )
 
   tags = var.tags
@@ -233,9 +238,6 @@ resource "random_password" "jwt_secret" {
 #     ]
 #   }
 
-#   tags = var.tags
-# }
-
 # Storage Account for file uploads
 resource "azurerm_storage_account" "main" {
   count                    = var.create_storage_account ? 1 : 0
@@ -256,27 +258,27 @@ resource "azurerm_storage_container" "receipts" {
   container_access_type = "private"
 }
 
-# Optional: Application Insights (commented out for cost optimization)
-# resource "azurerm_log_analytics_workspace" "main" {
-#   count               = var.create_app_insights ? 1 : 0
-#   name                = "${var.app_name}-workspace"
-#   location            = azurerm_resource_group.main.location
-#   resource_group_name = azurerm_resource_group.main.name
-#   sku                 = "PerGB2018"
-#   retention_in_days   = 30
+# Application Insights for monitoring and logging
+resource "azurerm_log_analytics_workspace" "main" {
+  count               = var.create_app_insights ? 1 : 0
+  name                = "${var.app_name}-workspace"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  sku                 = "PerGB2018"
+  retention_in_days   = 30
 
-#   tags = var.tags
-# }
+  tags = var.tags
+}
 
-# resource "azurerm_application_insights" "main" {
-#   count               = var.create_app_insights ? 1 : 0
-#   name                = "${var.app_name}-insights"
-#   location            = azurerm_resource_group.main.location
-#   resource_group_name = azurerm_resource_group.main.name
-#   workspace_id        = azurerm_log_analytics_workspace.main[0].id
-#   application_type    = "Node.JS"
+resource "azurerm_application_insights" "main" {
+  count               = var.create_app_insights ? 1 : 0
+  name                = "${var.app_name}-insights"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
+  workspace_id        = azurerm_log_analytics_workspace.main[0].id
+  application_type    = "Node.JS"
 
-#   tags = var.tags
-# }
+  tags = var.tags
+}
 
-# data "azurerm_client_config" "current" {}
+data "azurerm_client_config" "current" {}

@@ -93,3 +93,20 @@ output "cors_origin" {
   description = "Configured CORS origin(s) for the API"
   value       = local.cors_origin
 }
+
+output "application_insights_id" {
+  description = "Application Insights resource ID (if created)"
+  value       = var.create_app_insights ? azurerm_application_insights.main[0].id : null
+}
+
+output "application_insights_instrumentation_key" {
+  description = "Application Insights instrumentation key (if created)"
+  value       = var.create_app_insights ? azurerm_application_insights.main[0].instrumentation_key : null
+  sensitive   = true
+}
+
+output "application_insights_connection_string" {
+  description = "Application Insights connection string (if created)"
+  value       = var.create_app_insights ? azurerm_application_insights.main[0].connection_string : null
+  sensitive   = true
+}
