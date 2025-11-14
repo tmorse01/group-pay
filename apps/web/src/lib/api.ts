@@ -16,6 +16,38 @@ interface RequestOptions extends RequestInit {
   requiresAuth?: boolean;
 }
 
+// Track ongoing refresh to prevent multiple simultaneous refresh attempts
+let refreshPromise: Promise<boolean> | null = null;
+
+/**
+ * Attempts to refresh the access token using the refresh token cookie
+ * @returns true if refresh succeeded, false otherwise
+ */
+async function refreshToken(): Promise<boolean> {
+  // If a refresh is already in progress, wait for it
+  if (refreshPromise) {
+    return refreshPromise;
+  }
+
+  refreshPromise = (async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/auth/refresh`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      const success = response.ok;
+      refreshPromise = null;
+      return success;
+    } catch {
+      refreshPromise = null;
+      return false;
+    }
+  })();
+
+  return refreshPromise;
+}
+
 async function request<T>(
   endpoint: string,
   options: RequestOptions = {}
@@ -48,7 +80,7 @@ async function request<T>(
   }
 
   try {
-    const response = await fetch(url, config);
+    let response = await fetch(url, config);
 
     // Handle different response types
     let data;
@@ -58,6 +90,37 @@ async function request<T>(
       data = await response.json();
     } else {
       data = await response.text();
+    }
+
+    // Handle token refresh on 401 errors (expired access token)
+    if (
+      response.status === 401 &&
+      requiresAuth &&
+      !endpoint.includes('/auth/')
+    ) {
+      // Attempt to refresh the token
+      const refreshed = await refreshToken();
+
+      if (refreshed) {
+        // Retry the original request with the new access token
+        response = await fetch(url, config);
+
+        // Re-parse the response data after retry
+        if (
+          response.headers.get('Content-Type')?.includes('application/json')
+        ) {
+          data = await response.json();
+        } else {
+          data = await response.text();
+        }
+      } else {
+        // Refresh failed - throw the original 401 error
+        throw new ApiError(
+          data?.message || `HTTP ${response.status}: ${response.statusText}`,
+          response.status,
+          data
+        );
+      }
     }
 
     if (!response.ok) {
