@@ -1,4 +1,4 @@
-import Fastify from 'fastify';
+import Fastify, { type FastifyInstance } from 'fastify';
 import jwt from '@fastify/jwt';
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
@@ -7,6 +7,8 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 
 import { env } from './config/env.js';
+import type { TelemetryClient } from 'applicationinsights';
+import { createApplicationInsightsStream } from './lib/pino-appinsights.js';
 
 // Extend FastifyRequest to include startTime for logging
 declare module 'fastify' {
@@ -26,23 +28,53 @@ import settlementRoutes from './routes/settlements.js';
 import userRoutes from './routes/users.js';
 import receiptRoutes from './routes/receipts.js';
 
-export async function createApp() {
-  const app = Fastify({
-    logger: {
+export async function createApp(appInsightsClient?: TelemetryClient | null) {
+  // Configure logger with Application Insights stream in production
+  // Use explicit type to avoid TypeScript inference issues
+  let loggerConfig:
+    | {
+        level: string;
+        transport?: {
+          target: string;
+          options: Record<string, unknown>;
+        };
+        stream?: { write: (log: string) => void };
+      }
+    | boolean
+    | undefined;
+
+  if (env.NODE_ENV === 'development') {
+    // Development: use pino-pretty for readable console output
+    loggerConfig = {
       level: env.LOG_LEVEL,
-      transport:
-        env.NODE_ENV === 'development'
-          ? {
-              target: 'pino-pretty',
-              options: {
-                colorize: true,
-                translateTime: 'HH:MM:ss Z',
-                ignore: 'pid,hostname',
-              },
-            }
-          : undefined,
-    },
-  });
+      transport: {
+        target: 'pino-pretty',
+        options: {
+          colorize: true,
+          translateTime: 'HH:MM:ss Z',
+          ignore: 'pid,hostname',
+        },
+      },
+    };
+  } else if (appInsightsClient) {
+    // Production with Application Insights: use custom stream
+    // The stream writes to both stdout and Application Insights
+    loggerConfig = {
+      level: env.LOG_LEVEL,
+      stream: createApplicationInsightsStream(appInsightsClient),
+    };
+  } else {
+    // Production without Application Insights: just stdout
+    loggerConfig = {
+      level: env.LOG_LEVEL,
+    };
+  }
+
+  // Create Fastify app with logger configuration
+  // Type assertion needed because Fastify's logger type is complex
+  const app = Fastify({
+    logger: loggerConfig,
+  }) as FastifyInstance;
 
   // Register plugins
   await app.register(sensible);

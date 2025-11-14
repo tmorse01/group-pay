@@ -4,6 +4,7 @@ import { prisma } from './lib/prisma.js';
 
 // Initialize Application Insights if connection string is available
 // This must be done early to properly instrument the app
+// Returns the TelemetryClient if initialized, null otherwise
 async function initializeApplicationInsights() {
   if (process.env.APPLICATIONINSIGHTS_CONNECTION_STRING) {
     try {
@@ -26,23 +27,29 @@ async function initializeApplicationInsights() {
         )
         .start();
 
+      const client = appInsights.defaultClient;
+
       console.log('[APPLICATIONINSIGHTS] Initialized successfully');
       console.log(
         '[APPLICATIONINSIGHTS] Instrumentation Key:',
         process.env.APPINSIGHTS_INSTRUMENTATIONKEY?.substring(0, 8) + '...'
       );
+
+      return client;
     } catch (error) {
       console.error('[APPLICATIONINSIGHTS] Failed to initialize:', error);
+      return null;
     }
   }
+  return null;
 }
 
 async function start() {
   // Initialize Application Insights before starting the app
-  await initializeApplicationInsights();
+  const appInsightsClient = await initializeApplicationInsights();
   try {
-    // Create the app instance
-    const app = await createApp();
+    // Create the app instance, passing Application Insights client for Pino integration
+    const app = await createApp(appInsightsClient);
 
     // Test database connection
     await prisma.$connect();
