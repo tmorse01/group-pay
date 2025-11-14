@@ -81,6 +81,26 @@ export default async function authRoutes(fastify: FastifyInstance) {
 
       // Set httpOnly cookies
       const cookieOptions = getCookieOptions();
+      const origin = request.headers.origin;
+      const referer = request.headers.referer;
+
+      fastify.log.info({
+        msg: 'Setting authentication cookies (register)',
+        userId: user.id,
+        email: user.email,
+        origin,
+        referer,
+        cookieOptions: {
+          httpOnly: cookieOptions.httpOnly,
+          secure: cookieOptions.secure,
+          sameSite: cookieOptions.sameSite,
+          path: cookieOptions.path,
+          isProduction: env.NODE_ENV === 'production',
+        },
+        accessTokenLength: accessToken.length,
+        refreshTokenLength: refreshToken.length,
+      });
+
       reply
         .setCookie('accessToken', accessToken, {
           ...cookieOptions,
@@ -91,6 +111,12 @@ export default async function authRoutes(fastify: FastifyInstance) {
           maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         })
         .code(201);
+
+      fastify.log.debug({
+        msg: 'Registration cookies set successfully',
+        userId: user.id,
+        email: user.email,
+      });
 
       return { user };
     }
@@ -126,6 +152,26 @@ export default async function authRoutes(fastify: FastifyInstance) {
 
       // Set httpOnly cookies
       const cookieOptions = getCookieOptions();
+      const origin = request.headers.origin;
+      const referer = request.headers.referer;
+
+      fastify.log.info({
+        msg: 'Setting authentication cookies',
+        userId: user.id,
+        email: user.email,
+        origin,
+        referer,
+        cookieOptions: {
+          httpOnly: cookieOptions.httpOnly,
+          secure: cookieOptions.secure,
+          sameSite: cookieOptions.sameSite,
+          path: cookieOptions.path,
+          isProduction: env.NODE_ENV === 'production',
+        },
+        accessTokenLength: accessToken.length,
+        refreshTokenLength: refreshToken.length,
+      });
+
       reply
         .setCookie('accessToken', accessToken, {
           ...cookieOptions,
@@ -135,6 +181,12 @@ export default async function authRoutes(fastify: FastifyInstance) {
           ...cookieOptions,
           maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
+
+      fastify.log.debug({
+        msg: 'Cookies set successfully',
+        userId: user.id,
+        email: user.email,
+      });
 
       return {
         user: {
@@ -175,9 +227,34 @@ export default async function authRoutes(fastify: FastifyInstance) {
 
         // Set new access token cookie
         const cookieOptions = getCookieOptions();
+        const origin = request.headers.origin;
+        const referer = request.headers.referer;
+
+        fastify.log.info({
+          msg: 'Refreshing access token',
+          userId: user.id,
+          email: user.email,
+          origin,
+          referer,
+          cookieOptions: {
+            httpOnly: cookieOptions.httpOnly,
+            secure: cookieOptions.secure,
+            sameSite: cookieOptions.sameSite,
+            path: cookieOptions.path,
+            isProduction: env.NODE_ENV === 'production',
+          },
+          newAccessTokenLength: newAccessToken.length,
+        });
+
         reply.setCookie('accessToken', newAccessToken, {
           ...cookieOptions,
           maxAge: 15 * 60 * 1000, // 15 minutes
+        });
+
+        fastify.log.debug({
+          msg: 'Access token refreshed successfully',
+          userId: user.id,
+          email: user.email,
         });
 
         return { success: true };

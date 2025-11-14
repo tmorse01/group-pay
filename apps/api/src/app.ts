@@ -7,6 +7,13 @@ import swagger from '@fastify/swagger';
 import swaggerUi from '@fastify/swagger-ui';
 
 import { env } from './config/env.js';
+
+// Extend FastifyRequest to include startTime for logging
+declare module 'fastify' {
+  interface FastifyRequest {
+    startTime?: number;
+  }
+}
 import errorHandler from './plugins/errorHandler.js';
 import auth from './plugins/auth.js';
 // import rateLimit from './plugins/rateLimit.js';
@@ -167,6 +174,43 @@ export async function createApp() {
 
   // Register error handler before auth plugin
   await app.register(errorHandler);
+
+  // Add request logging hook
+  app.addHook('onRequest', async (request, _reply) => {
+    const startTime = Date.now();
+    request.startTime = startTime;
+
+    // Log request details (excluding sensitive data)
+    app.log.debug({
+      msg: 'Incoming request',
+      method: request.method,
+      url: request.url,
+      path: request.routerPath || request.url.split('?')[0],
+      origin: request.headers.origin,
+      referer: request.headers.referer,
+      userAgent: request.headers['user-agent'],
+      hasCookies: !!request.cookies,
+      cookieKeys: request.cookies ? Object.keys(request.cookies) : [],
+      hasAuthHeader: !!request.headers.authorization,
+    });
+  });
+
+  // Add response logging hook
+  app.addHook('onResponse', async (request, reply) => {
+    const duration = Date.now() - (request.startTime || Date.now());
+
+    app.log.info({
+      msg: 'Request completed',
+      method: request.method,
+      url: request.url,
+      path: request.routerPath || request.url.split('?')[0],
+      statusCode: reply.statusCode,
+      duration: `${duration}ms`,
+      origin: request.headers.origin,
+      hasCookies: !!request.cookies,
+      cookieKeys: request.cookies ? Object.keys(request.cookies) : [],
+    });
+  });
 
   // TODO: Register rate limiting when compatible version is available
   // await app.register(rateLimit);

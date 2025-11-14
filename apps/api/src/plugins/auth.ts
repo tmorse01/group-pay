@@ -54,21 +54,83 @@ async function authPlugin(fastify: FastifyInstance) {
     let token: string | undefined;
 
     const authHeader = request.headers.authorization;
+    const cookies = request.cookies;
+    const origin = request.headers.origin;
+    const referer = request.headers.referer;
+    const userAgent = request.headers['user-agent'];
+
+    // Log authentication attempt details
+    fastify.log.info({
+      msg: 'Authentication check',
+      path: normalizedPath,
+      method: request.method,
+      origin,
+      referer,
+      hasAuthHeader: !!authHeader,
+      hasCookies: !!cookies,
+      cookieKeys: cookies ? Object.keys(cookies) : [],
+      hasAccessTokenCookie: !!cookies?.accessToken,
+      hasRefreshTokenCookie: !!cookies?.refreshToken,
+      userAgent,
+    });
+
     if (authHeader?.startsWith('Bearer ')) {
       token = authHeader.substring(7);
+      fastify.log.debug({
+        msg: 'Token found in Authorization header',
+        tokenLength: token.length,
+        tokenPrefix: token.substring(0, 10) + '...',
+      });
     } else if (request.cookies?.accessToken) {
       token = request.cookies.accessToken;
+      fastify.log.debug({
+        msg: 'Token found in accessToken cookie',
+        tokenLength: token.length,
+        tokenPrefix: token.substring(0, 10) + '...',
+        cookieValue: request.cookies.accessToken.substring(0, 20) + '...',
+      });
     }
 
     if (!token) {
-      fastify.log.warn('No authentication token found');
+      fastify.log.warn({
+        msg: 'No authentication token found',
+        path: normalizedPath,
+        method: request.method,
+        origin,
+        referer,
+        hasCookies: !!cookies,
+        cookieKeys: cookies ? Object.keys(cookies) : [],
+        allCookies: cookies,
+        headers: {
+          authorization: authHeader ? 'present' : 'missing',
+          cookie: request.headers.cookie ? 'present' : 'missing',
+        },
+      });
       throw new UnauthorizedError('No authentication token provided');
     }
 
     try {
       const payload = verifyToken(token);
       request.authUser = payload;
+      fastify.log.debug({
+        msg: 'Token verified successfully',
+        userId: payload.userId,
+        email: payload.email,
+      });
     } catch (error) {
+      fastify.log.warn({
+        msg: 'Token verification failed',
+        error: error instanceof Error ? error.message : String(error),
+        errorType:
+          error instanceof jwt.JsonWebTokenError
+            ? 'JsonWebTokenError'
+            : error instanceof jwt.TokenExpiredError
+              ? 'TokenExpiredError'
+              : 'UnknownError',
+        tokenLength: token.length,
+        tokenPrefix: token.substring(0, 10) + '...',
+      });
+
       if (error instanceof jwt.JsonWebTokenError) {
         throw new UnauthorizedError('Invalid token');
       }
